@@ -88,7 +88,7 @@ Indexes: unique `frame_no_norm`; index `frame_no_loose`, `fein_code_hash`; uniqu
 | GET | `/api/stolen?type=&color=&district=` | Public stolen list: no owner data, no frame number, district + date only, side/detail photos only. Filter by district, not bbox (a bbox over exact points could be narrowed to the exact spot) | Public |
 | GET | `/api/stolen/{token}` | One stolen bike (share card, QR tag page); 404 if not stolen | Public |
 | GET | `/api/stolen/{token}/photos/{photoId}?size=thumb` | Photo of a stolen bike (side/detail only, only while stolen) | Public |
-| POST | `/api/check` | Frame no. / FEIN → status | Public, rate-limited, captcha |
+| POST | `/api/check` | `{frameNumber \| feinCode, captchaToken}` → `{result: stolen \| verified_transfer \| possible_match \| unknown, bikes}`. Exact match first (a registered clean bike is `unknown`: registration isn't revealed), then the loose key against **stolen bikes only**. `bikes` (public stolen view) only for stolen / possible_match. Every call logged as keyed hashes (IP with daily salt, query) | Public, rate policy `check` per IP (`RateLimits:CheckPerTenMinutes`), captcha |
 | GET / POST / DELETE | `/api/bikes/{id}/transfers` | Transfer state (open code, certificate id, previous owners) / create code (plain code only in this response, replaces an open one, 409 if stolen) / cancel open code | Owner |
 | POST | `/api/transfers/claim` | Claim code: owner changes, history kept. Unknown/expired/used codes all get the same 400; rate policy `claim` (10 per 10 min per user) | User |
 | GET | `/api/transfers/{id}/certificate.pdf` | Certificate PDF | New owner |

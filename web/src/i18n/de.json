@@ -26,7 +26,41 @@
   },
   "check": {
     "title": "Rad prüfen",
-    "body": "Vor dem Kauf: Rahmennummer oder FEIN-Code eingeben und sehen, ob das Rad als gestohlen gemeldet ist."
+    "body": "Vor dem Kauf eines gebrauchten Rads: Rahmennummer oder FEIN-Code eingeben und sehen, ob es als gestohlen gemeldet ist.",
+    "feinCode": "FEIN-Code",
+    "frameHint": "Meist unter dem Tretlager eingeschlagen. Leerzeichen und Bindestriche sind egal.",
+    "feinHint": "Die Polizei-Gravur, z. B. „MS 123 456 789 AB“.",
+    "submit": "Prüfen",
+    "captchaUnavailable": "Sicherheitsprüfung konnte nicht geladen werden. Bitte später erneut versuchen.",
+    "result": {
+      "stolen": {
+        "title": "Als gestohlen gemeldet",
+        "body": "Kauf dieses Rad nicht. Sprich den Verkäufer nicht darauf an – ruf die Polizei (110)."
+      },
+      "possible_match": {
+        "title": "Ähnliches gestohlenes Rad gefunden",
+        "body": "Die Nummer ähnelt der eines gestohlenen Rads (z. B. O statt 0). Vergleiche Nummer und Fotos genau mit dem Rad vor dir."
+      },
+      "verified_transfer": {
+        "title": "Sichere Übergabe vorbereitet",
+        "body": "Die Eigentümerin oder der Eigentümer hat für dieses Rad eine LeezenPass-Übergabe vorbereitet. Lass dir beim Bezahlen den Übergabe-Code geben – dann wirst du direkt als Eigentümer:in eingetragen."
+      },
+      "unknown": {
+        "title": "Kein Eintrag gefunden",
+        "body": "Zu dieser Nummer ist bei LeezenPass kein Diebstahl gemeldet. Das heißt nicht, dass das Rad sicher ist – achte auf die Warnzeichen."
+      }
+    },
+    "signs": {
+      "title": "Warnzeichen beim Gebrauchtkauf",
+      "price": "Preis deutlich unter dem Marktwert",
+      "receipt": "Kein Kaufbeleg, keine Rechnung",
+      "frame": "Rahmennummer zerkratzt, überlackiert oder fehlt",
+      "place": "Treffen nur am Bahnhof oder Parkplatz, nicht zu Hause",
+      "hurry": "Zeitdruck: „muss heute noch weg“",
+      "lock": "Kein Schlüssel oder aufgebrochenes Schloss",
+      "details": "Verkäufer:in kennt Details des Rads nicht",
+      "tip": "Schließe einen Kaufvertrag mit Rahmennummer und Ausweisdaten ab – oder kauf mit LeezenPass-Übergabe."
+    }
   },
   "stolen": {
     "title": "Gestohlene Räder",
@@ -210,7 +244,10 @@
     "transferCodeInvalid": "Der Code ist ungültig, abgelaufen oder wurde schon verwendet.",
     "transferOwnBike": "Das ist dein eigener Code – gib ihn der Person, die das Rad kauft.",
     "transferStolen": "Ein als gestohlen gemeldetes Rad kann nicht übergeben werden.",
-    "concurrentChange": "Das wurde gerade gleichzeitig geändert. Bitte lade die Seite neu."
+    "concurrentChange": "Das wurde gerade gleichzeitig geändert. Bitte lade die Seite neu.",
+    "checkInput": "Bitte Rahmennummer oder FEIN-Code eingeben.",
+    "captchaFailed": "Sicherheitsprüfung fehlgeschlagen. Bitte noch einmal versuchen.",
+    "checkFailed": "Prüfung fehlgeschlagen. Bitte noch einmal versuchen."
   },
   "reportTheft": {
     "title": "Diebstahl melden",

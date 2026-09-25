@@ -4,6 +4,7 @@ using FastEndpoints;
 using FastEndpoints.Swagger;
 using LeezenPass.Api.Infrastructure.Data;
 using LeezenPass.Api.Infrastructure.Identity;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
@@ -13,6 +14,10 @@ public static class MiddlewareConfig
 {
   public static async Task<WebApplication> UseAppMiddlewareAndMigrateDatabase(this WebApplication app)
   {
+    // Real client IP for rate limits and the hashed lookup log. Only trusted from loopback
+    // (the Vite dev proxy / a reverse proxy on the same machine); default KnownProxies = loopback.
+    app.UseForwardedHeaders(new ForwardedHeadersOptions { ForwardedHeaders = ForwardedHeaders.XForwardedFor });
+
     // Generic message only, in every environment (the demo runs as Development): details go to the log.
     app.UseDefaultExceptionHandler(useGenericReason: true);
     if (!app.Environment.IsDevelopment())

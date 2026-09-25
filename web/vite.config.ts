@@ -47,7 +47,8 @@ export default defineConfig(({ mode }) => {
     server: {
       // Same-origin in dev so the auth cookie just works.
       proxy: {
-        '/api': { target: apiTarget, changeOrigin: true },
+        // xfwd: pass the client IP on (X-Forwarded-For) for per-IP rate limits; the API trusts it from loopback only.
+        '/api': { target: apiTarget, changeOrigin: true, xfwd: true },
       },
     },
   }

@@ -52,16 +52,30 @@ public static class InfrastructureServiceExtensions
     if (useFakes)
     {
       services.AddSingleton<IEmailSender, FakeEmailSender>();
-      services.AddSingleton<ICaptchaVerifier, FakeCaptchaVerifier>();
     }
     else
     {
       services.AddScoped<IEmailSender, SmtpEmailSender>();
-      services.AddHttpClient<ICaptchaVerifier, TurnstileCaptchaVerifier>(c => c.Timeout = TimeSpan.FromSeconds(5));
     }
 
-    logger.LogInformation("Infrastructure registered (UseFakes={UseFakes}, Vision={Vision})",
-      useFakes, realVision ? $"{vision.Model} @ {vision.BaseUrl}" : "fake");
+    // Captcha has its own switch so real Turnstile can be shown while everything else stays fake.
+    var captcha = config.GetSection(CaptchaOptions.Section).Get<CaptchaOptions>() ?? new CaptchaOptions();
+    var realCaptcha = captcha.Provider == CaptchaProvider.Turnstile || (captcha.Provider == CaptchaProvider.Auto && !useFakes);
+    if (realCaptcha)
+    {
+      services.AddHttpClient<ICaptchaVerifier, TurnstileCaptchaVerifier>(c => c.Timeout = TimeSpan.FromSeconds(5));
+      if (string.IsNullOrWhiteSpace(captcha.SecretKey))
+      {
+        logger.LogWarning("Captcha:SecretKey is empty: every /api/check will fail with captchaFailed. Set it or use Captcha:Provider=Fake.");
+      }
+    }
+    else
+    {
+      services.AddSingleton<ICaptchaVerifier, FakeCaptchaVerifier>();
+    }
+
+    logger.LogInformation("Infrastructure registered (UseFakes={UseFakes}, Captcha={Captcha}, Vision={Vision})",
+      useFakes, realCaptcha ? "turnstile" : "fake", realVision ? $"{vision.Model} @ {vision.BaseUrl}" : "fake");
 
     return services;
   }

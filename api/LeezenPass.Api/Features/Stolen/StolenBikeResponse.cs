@@ -55,7 +55,12 @@ public sealed record StolenBikeRow(
 
 public sealed record PublicPhotoRow(Guid Id, PhotoKind Kind);
 
-public sealed record StolenBikeFilter(string? Token = null, BikeType? Type = null, string? Color = null, string? District = null);
+public sealed record StolenBikeFilter(
+  string? Token = null,
+  BikeType? Type = null,
+  string? Color = null,
+  string? District = null,
+  IReadOnlyCollection<Guid>? BikeIds = null);
 
 public static class StolenBikeQueries
 {
@@ -71,6 +76,11 @@ public static class StolenBikeQueries
     if (filter.Token is not null)
     {
       query = query.Where(x => x.b.PublicToken == filter.Token);
+    }
+
+    if (filter.BikeIds is not null)
+    {
+      query = query.Where(x => filter.BikeIds.Contains(x.b.Id));
     }
 
     if (filter.Type is not null)

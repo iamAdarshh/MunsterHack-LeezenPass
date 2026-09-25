@@ -176,3 +176,11 @@ export interface TagStatus {
   transferOpen: boolean
   frameNumberHint: string
 }
+
+export type CheckResult = 'stolen' | 'verified_transfer' | 'possible_match' | 'unknown'
+
+/** POST /api/check. Bikes only for stolen / possible_match. */
+export interface CheckResponse {
+  result: CheckResult
+  bikes: StolenBike[]
+}

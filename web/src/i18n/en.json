@@ -26,7 +26,41 @@
   },
   "check": {
     "title": "Check a bike",
-    "body": "Before you buy: enter the frame number or FEIN code to see whether the bike has been reported stolen."
+    "body": "Before buying a used bike: enter the frame number or FEIN code and see whether it has been reported stolen.",
+    "feinCode": "FEIN code",
+    "frameHint": "Usually stamped under the bottom bracket. Spaces and dashes don't matter.",
+    "feinHint": "The police engraving, e.g. “MS 123 456 789 AB”.",
+    "submit": "Check",
+    "captchaUnavailable": "Security check could not be loaded. Please try again later.",
+    "result": {
+      "stolen": {
+        "title": "Reported stolen",
+        "body": "Don't buy this bike. Don't confront the seller – call the police (110)."
+      },
+      "possible_match": {
+        "title": "Similar stolen bike found",
+        "body": "The number is similar to a stolen bike's (e.g. O instead of 0). Compare number and photos carefully with the bike in front of you."
+      },
+      "verified_transfer": {
+        "title": "Safe handover prepared",
+        "body": "The owner has prepared a LeezenPass handover for this bike. Ask for the handover code when you pay – you'll be registered as the owner right away."
+      },
+      "unknown": {
+        "title": "No entry found",
+        "body": "No theft is reported for this number at LeezenPass. That doesn't mean the bike is safe – watch for the warning signs."
+      }
+    },
+    "signs": {
+      "title": "Warning signs when buying used",
+      "price": "Price far below market value",
+      "receipt": "No receipt or invoice",
+      "frame": "Frame number scratched off, painted over or missing",
+      "place": "Meeting only at the station or a car park, not at home",
+      "hurry": "Time pressure: “must go today”",
+      "lock": "No key, or a broken lock",
+      "details": "Seller doesn't know details of the bike",
+      "tip": "Make a sales contract with the frame number and ID details – or buy with a LeezenPass handover."
+    }
   },
   "stolen": {
     "title": "Stolen bikes",
@@ -210,7 +244,10 @@
     "transferCodeInvalid": "The code is invalid, expired or already used.",
     "transferOwnBike": "This is your own code – give it to the person buying the bike.",
     "transferStolen": "A bike reported stolen can't be handed over.",
-    "concurrentChange": "This was just changed at the same time. Please reload the page."
+    "concurrentChange": "This was just changed at the same time. Please reload the page.",
+    "checkInput": "Please enter a frame number or FEIN code.",
+    "captchaFailed": "Security check failed. Please try again.",
+    "checkFailed": "Check failed. Please try again."
   },
   "reportTheft": {
     "title": "Report theft",

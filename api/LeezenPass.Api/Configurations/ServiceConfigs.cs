@@ -8,7 +8,7 @@ public static class ServiceConfigs
   {
     services.AddInfrastructureServices(builder.Configuration, logger)
             .AddAuthConfigs(builder.Environment)
-            .AddRateLimitConfigs();
+            .AddRateLimitConfigs(builder.Configuration);
 
     return services;
   }
