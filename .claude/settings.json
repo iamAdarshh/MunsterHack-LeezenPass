@@ -1,0 +1,40 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dotnet build:*)",
+      "Bash(dotnet test:*)",
+      "Bash(dotnet format:*)",
+      "Bash(dotnet run:*)",
+      "Bash(dotnet ef migrations add:*)",
+      "Bash(dotnet ef migrations list:*)",
+      "Bash(dotnet ef database update:*)",
+      "Bash(dotnet restore:*)",
+      "Bash(npm run:*)",
+      "Bash(npx tsc:*)",
+      "Bash(docker compose:*)",
+      "Bash(git status)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(curl -s http://localhost:*)"
+    ],
+    "ask": [
+      "Bash(dotnet add package:*)",
+      "Bash(npm install:*)",
+      "Bash(dotnet ef migrations remove:*)",
+      "Bash(dotnet ef database drop:*)",
+      "Bash(git push:*)",
+      "Bash(git reset:*)",
+      "Bash(git rebase:*)",
+      "Bash(docker compose down -v:*)"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Read(./infra/.env)",
+      "Read(./**/secrets.json)",
+      "Bash(rm -rf:*)",
+      "Bash(git push --force:*)"
+    ]
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "app": { "name": "LeezenPass" },
+  "nav": {
+    "label": "Hauptnavigation",
+    "check": "Prüfen",
+    "myBikes": "Meine Räder",
+    "stolen": "Gestohlen",
+    "login": "Login"
+  },
+  "demo": { "banner": "Demo-Daten – alle Räder und Meldungen sind erfunden" },
+  "language": { "switch": "Sprache wechseln" },
+  "common": { "comingSoon": "Diese Seite ist noch in Arbeit." },
+  "check": {
+    "title": "Rad prüfen",
+    "body": "Vor dem Kauf: Rahmennummer oder FEIN-Code eingeben und sehen, ob das Rad als gestohlen gemeldet ist."
+  },
+  "myBikes": {
+    "title": "Meine Räder",
+    "body": "Registriere dein Rad mit Fotos und Rahmennummer und lade den Fahrradpass als PDF herunter."
+  },
+  "stolen": {
+    "title": "Gestohlene Räder",
+    "body": "Aktuell gestohlen gemeldete Räder in Münster. Gesehen? Ruf 110 an, sprich niemanden an."
+  },
+  "login": {
+    "title": "Anmelden",
+    "body": "Melde dich an, um deine Räder zu verwalten."
+  },
+  "notFound": {
+    "title": "Seite nicht gefunden",
+    "body": "Diese Seite gibt es nicht."
+  }
+}

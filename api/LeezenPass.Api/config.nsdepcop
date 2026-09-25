@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<NsDepCopConfig>
+    <Allowed From="*" To="*" />
+
+    <!-- Domain stays free of EF Core, ASP.NET and HTTP concerns. -->
+    <Disallowed From="LeezenPass.Api.Domain.*" To="LeezenPass.Api.Infrastructure.*" />
+    <Disallowed From="LeezenPass.Api.Domain.*" To="LeezenPass.Api.Features.*" />
+    <Disallowed From="LeezenPass.Api.Domain.*" To="LeezenPass.Api.Configurations.*" />
+    <Disallowed From="LeezenPass.Api.Domain.*" To="Microsoft.EntityFrameworkCore.*" />
+    <Disallowed From="LeezenPass.Api.Domain.*" To="Microsoft.AspNetCore.*" />
+
+    <AnalyzerConfig>
+        <IssueKind Name="IllegalDependency" Severity="Error" />
+    </AnalyzerConfig>
+</NsDepCopConfig>

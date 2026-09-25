@@ -1,0 +1,44 @@
+# Local dev infrastructure. API and web run on the host (dotnet run / npm run dev).
+# Values come from infra/.env (copy .env.example); the defaults below match appsettings.Development.json.
+name: leezenpass
+
+services:
+  db:
+    image: postgis/postgis:17-3.5
+    platform: linux/amd64 # no arm64 build; runs under Rosetta on Apple Silicon
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-leezenpass}
+      POSTGRES_USER: ${POSTGRES_USER:-leezenpass}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-leezenpass}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  minio:
+    # Upstream minio/minio images are no longer published; pgsty/minio is a maintained drop-in build.
+    image: pgsty/minio:RELEASE.2026-08-04T00-00-00Z
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-leezenpass}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-leezenpass-dev}
+    ports:
+      - "9000:9000" # S3 API
+      - "9001:9001" # web console
+    volumes:
+      - miniodata:/data
+
+  mailpit:
+    image: axllent/mailpit:v1.27
+    ports:
+      - "1025:1025" # SMTP
+      - "8025:8025" # web UI
+
+volumes:
+  pgdata:
+  miniodata:

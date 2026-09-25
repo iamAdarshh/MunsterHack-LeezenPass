@@ -1,0 +1,33 @@
+{
+  "app": { "name": "LeezenPass" },
+  "nav": {
+    "label": "Main navigation",
+    "check": "Check",
+    "myBikes": "My bikes",
+    "stolen": "Stolen",
+    "login": "Login"
+  },
+  "demo": { "banner": "Demo data – all bikes and reports are made up" },
+  "language": { "switch": "Switch language" },
+  "common": { "comingSoon": "This page is still in progress." },
+  "check": {
+    "title": "Check a bike",
+    "body": "Before you buy: enter the frame number or FEIN code to see whether the bike has been reported stolen."
+  },
+  "myBikes": {
+    "title": "My bikes",
+    "body": "Register your bike with photos and frame number and download the bike pass as a PDF."
+  },
+  "stolen": {
+    "title": "Stolen bikes",
+    "body": "Bikes currently reported stolen in Münster. Seen one? Call 110, don't confront anyone."
+  },
+  "login": {
+    "title": "Log in",
+    "body": "Log in to manage your bikes."
+  },
+  "notFound": {
+    "title": "Page not found",
+    "body": "This page doesn't exist."
+  }
+}

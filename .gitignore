@@ -1,0 +1,33 @@
+# Secrets
+.env
+.env.local
+.env.*.local
+infra/.env
+**/secrets.json
+
+# .NET
+bin/
+obj/
+*.user
+TestResults/
+
+# Node
+node_modules/
+web/dist/
+web/dev-dist/
+*.tsbuildinfo
+
+# App data
+uploads/
+*.log
+
+# Claude Code personal settings
+.claude/settings.local.json
+CLAUDE.local.md
+
+# OS / IDE
+.DS_Store
+.vs/
+.idea/
+.vscode/*
+!.vscode/extensions.json

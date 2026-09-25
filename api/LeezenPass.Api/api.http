@@ -1,0 +1,21 @@
+@api = http://localhost:5080
+
+GET {{api}}/api/health
+
+###
+POST {{api}}/api/auth/register
+Content-Type: application/json
+
+{ "email": "demo@leezenpass.local", "password": "Demo1234!" }
+
+###
+POST {{api}}/api/auth/login?useCookies=true
+Content-Type: application/json
+
+{ "email": "demo@leezenpass.local", "password": "Demo1234!" }
+
+###
+GET {{api}}/api/auth/manage/info
+
+###
+POST {{api}}/api/auth/logout
