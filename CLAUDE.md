@@ -13,7 +13,9 @@ Read the relevant SPEC section before implementing a feature. Backend and fronte
   2. Theft report + public stolen list + pass PDF
   3. AI photo prefill
   4. Ownership transfer + certificate PDF
-  5. ONE stretch feature (QR relay, sightings matching, or risk map), only when 1–4 are demoable
+  5. Ownership trust levels (receipt + possession checks, duplicate/dispute handling, partner registration)
+  6. Goodwill points (ledger, profile badge, opt-in leaderboard, referral)
+  7. ONE stretch feature (QR relay, sightings matching, or risk map), only when 1–6 are demoable
 - `main` must always build and run. Small commits, one slice at a time.
 - Only stable/GA releases. No preview, RC or beta NuGet/npm packages.
 - Every external dependency (LLM, email, captcha, storage) needs a fake so the demo still works offline (event Wi-Fi is unreliable).
@@ -63,6 +65,9 @@ All from the repo root. Verified 2026-09-25.
 - Sighting scoring is a list of `IScoreComponent`s (open/closed: add a component, don't edit others).
 - No generic repository. Use `AppDbContext` directly in slices.
 - No MediatR / extra layers unless the template already requires them.
+- Trust rules live in the domain: `Bike.MarkEvidenceChecked()`, `Bike.MarkPartnerVerified()`, `Bike.ResetTrust()`. Endpoints never set `TrustLevel` directly.
+- `GoodwillPolicy` (domain) is the only place with point values, caps and badge thresholds. `GoodwillService` (concrete class, no interface) writes the ledger inside the same transaction as the outcome.
+- Roles: `Partner`, `Admin` (ASP.NET Core Identity roles). Partner/admin endpoints require the role.
 
 ## Privacy rules (non-negotiable)
 
@@ -73,6 +78,9 @@ All from the repo root. Verified 2026-09-25.
 - Risk map: only hex cells with ≥ 3 reports.
 - Log hashed IPs only. No personal data in logs.
 - Seed data is synthetic and labelled "Demo-Daten" in the UI.
+- Receipt photos and possession photos are owner-only. Never returned by public endpoints.
+- Duplicate or stolen frame-number registrations reveal nothing about the existing bike or owner.
+- Leaderboard: opt-in users only, alias only.
 
 ## Code style
 

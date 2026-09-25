@@ -22,6 +22,13 @@ Use this when reviewing a diff or PR. This is a 36-hour hackathon project: optim
 - Secrets, API keys or connection strings committed; `.env` tracked.
 - SQL built by string concatenation; raw SQL with user input not parameterised.
 - Exception details or stack traces returned to clients.
+- Trust level raised without both receipt AND possession checks passing (or without partner role / eligible transfer).
+- Possession challenge code reusable, not expiring after 10 min, not bound to bike + user, or stored in plain text.
+- Receipt/possession photos reachable by anyone other than the owner.
+- Registration with an existing frame number overwrites the bike, reveals the owner, or reveals that the bike is stolen.
+- Goodwill points credited on submission instead of verified outcome; credit not idempotent (double credit on retry); points written outside the outcome's transaction.
+- Leaderboard shows users who did not opt in, or shows email / real name.
+- Partner or admin endpoint without role check.
 
 ### Correctness
 - Frame-number lookup does not use `FrameNumber` normalisation (exact then loose).
@@ -44,6 +51,9 @@ Use this when reviewing a diff or PR. This is a 36-hour hackathon project: optim
 - `any` in TypeScript; server state held in `useState` instead of TanStack Query.
 - Endpoint added/changed but `docs/SPEC.md` API table not updated.
 - N+1 queries on list endpoints (stolen list, matches).
+- Point values, caps or badge thresholds hard-coded outside `GoodwillPolicy`.
+- `TrustLevel` assigned directly in an endpoint instead of via domain methods.
+- AI verification failure shown as a hard error instead of a retry prompt.
 
 ## Don't flag
 

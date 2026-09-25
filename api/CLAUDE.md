@@ -14,6 +14,10 @@ api/LeezenPass.Api/
     Theft/Report/ Theft/MarkRecovered/ Stolen/List/
     Transfers/Create/ Transfers/Claim/ Transfers/Certificate/ Verify/
     Ai/Extract/
+    Verification/Challenge/ Verification/Possession/ Verification/Receipt/ Verification/Status/
+    Disputes/Open/ Disputes/Mine/ Disputes/Resolve/
+    Partner/RegisterBike/
+    Goodwill/Mine/ Goodwill/Leaderboard/ Profile/Update/
     Sightings/ RiskMap/ Tags/        (stretch)
   Infrastructure/
     Data/            AppDbContext, entity configurations, migrations
@@ -69,3 +73,11 @@ Adapt folder names to what the Ardalis Minimal Clean template generates; keep th
 - Options classes bound from config: `Storage`, `Vision`, `Email`, `Captcha`, `Fein` (HmacSecret), `Features` (UseFakes).
 - `Features:UseFakes=true` switches every external dependency to its Fake.
 - Secrets from environment / user-secrets. Document every key in `infra/.env.example`.
+
+## Trust + goodwill specifics
+
+- `IVisionExtractor` gains `ExtractReceiptAsync` and `CheckPossessionAsync`; update the Fake (pass if file name contains `pass`).
+- Challenge code: 4 digits from `RandomNumberGenerator`, stored as SHA-256(code + bikeId), 10 min, single use. Rate-limit policy `challenge`: 5 per hour per user.
+- Duplicate frame on register: return `ProblemDetails` 409 with type `frame-already-registered` or `frame-not-registrable`; same response time for both paths.
+- Goodwill ledger: unique index `(user_id, action, ref_type, ref_id)`; `GoodwillService.CreditAsync` catches `DbUpdateException` for the unique violation and returns false.
+- Seed roles `Partner`, `Admin` and users `partner@demo.local`, `admin@demo.local`.

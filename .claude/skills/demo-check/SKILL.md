@@ -13,6 +13,10 @@ Run a pre-pitch smoke test. Do not add features; only fix blockers you find, and
    - **B. Check before you buy**: `/api/check` with a stolen demo frame number → `stolen` with photo; with a registered-only bike → `unknown` without data; with a mistyped (O↔0) number → `possible_match`.
    - **C. Theft → recovery**: report theft → appears in `/api/stolen` without owner data → (if built) sighting → owner sees match → mark recovered.
    - **D. Transfer**: create code → claim as second demo user → certificate PDF + verify page.
+   - **E. Verify ownership**: owner uploads receipt (`…pass.jpg`) → requests challenge → uploads possession photo (`…pass.jpg`) → bike shows "Per Beleg geprüft"; wrong/expired code fails; check result for this bike shows the trust label.
+   - **F. Duplicate protection**: second user registers the stolen demo frame number → neutral 409, owner gets email in Mailpit; registers a normal existing frame → 409 + dispute opened.
+   - **G. Partner**: partner registers a bike → transfer code → customer claims → bike is "Von Partner bestätigt".
+   - **H. Goodwill**: registration +10, verification +20, retrying the same verification does not double-credit, leaderboard shows only opted-in alias.
 4. Repeat A–D with `Features:UseFakes=true` (simulated no-internet).
 5. Privacy spot check: grep public endpoint responses for email, FEIN, owner name; check an uploaded file has no EXIF GPS.
 6. Report a table: flow · online · offline · issue. End with GO / NO-GO and the top 3 fixes if NO-GO.
