@@ -25,7 +25,7 @@ public class VisionOptions
   public string Model { get; set; } = "qwen/qwen3-vl-8b";
 
   /// <summary>After this the UI falls back to manual entry.</summary>
-  public int TimeoutSeconds { get; set; } = 15;
+  public int TimeoutSeconds { get; set; } = 30;
 
   /// <summary>Images are downscaled before sending: faster, and enough for type/colour/OCR.</summary>
   public int MaxImageEdge { get; set; } = 1024;

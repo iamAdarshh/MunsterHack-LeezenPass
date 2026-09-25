@@ -140,7 +140,7 @@ Candidates: stolen bikes within 10 km, reported in last 90 days. Score > 0.6 →
 
 ### AI extraction
 
-Strict JSON schema: `{type, color_primary, color_secondary, brand_guess, features[], frame_number_candidate, confidence}`; enum values are exactly the catalog keys (`color_secondary` may be `none`). Provider: any OpenAI-compatible chat API with image input via `response_format: json_schema` (strict). Chosen: **Qwen3-VL-8B in LM Studio, running locally** (works offline, photos never leave the laptop, ~4–10 s per photo on an M3). Timeout 15 s, then manual entry. Requests are sent one at a time (a local model can't handle two images within the timeout). Type/colours/features are only prefilled at confidence ≥ 0.4; brand and frame number are always offered for the user to check. `FakeVisionExtractor` returns canned data.
+Strict JSON schema: `{type, color_primary, color_secondary, brand_guess, features[], frame_number_candidate, confidence}`; enum values are exactly the catalog keys (`color_secondary` may be `none`). Provider: any OpenAI-compatible chat API with image input via `response_format: json_schema` (strict). Chosen: **Qwen3-VL-8B in LM Studio, running locally** (works offline, photos never leave the laptop, ~10–20 s for a new 1024 px photo on an M3, mostly image encoding). Timeout 30 s, then manual entry. Requests are sent one at a time (a local model can't handle two images within the timeout). Type/colours/features are only prefilled at confidence ≥ 0.4; brand and frame number are always offered for the user to check. `FakeVisionExtractor` returns canned data.
 
 ### Images
 
