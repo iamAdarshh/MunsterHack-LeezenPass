@@ -23,6 +23,7 @@
 
     <PackageReference Include="MailKit" />
     <PackageReference Include="QuestPDF" />
+    <PackageReference Include="SkiaSharp" />
 
     <PackageReference Include="NsDepCop">
       <PrivateAssets>all</PrivateAssets>

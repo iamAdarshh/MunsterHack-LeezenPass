@@ -1,22 +1,32 @@
 {
-  "app": { "name": "LeezenPass" },
+  "app": {
+    "name": "LeezenPass"
+  },
   "nav": {
     "label": "Main navigation",
     "check": "Check",
     "myBikes": "My bikes",
     "stolen": "Stolen",
-    "login": "Login"
+    "login": "Login",
+    "account": "Account"
   },
-  "demo": { "banner": "Demo data – all bikes and reports are made up" },
-  "language": { "switch": "Switch language" },
-  "common": { "comingSoon": "This page is still in progress." },
+  "demo": {
+    "banner": "Demo data – all bikes and reports are made up"
+  },
+  "language": {
+    "switch": "Switch language"
+  },
+  "common": {
+    "comingSoon": "This page is still in progress.",
+    "loading": "Loading …",
+    "retry": "Try again",
+    "back": "Back",
+    "yes": "Yes",
+    "no": "No"
+  },
   "check": {
     "title": "Check a bike",
     "body": "Before you buy: enter the frame number or FEIN code to see whether the bike has been reported stolen."
-  },
-  "myBikes": {
-    "title": "My bikes",
-    "body": "Register your bike with photos and frame number and download the bike pass as a PDF."
   },
   "stolen": {
     "title": "Stolen bikes",
@@ -24,10 +34,158 @@
   },
   "login": {
     "title": "Log in",
-    "body": "Log in to manage your bikes."
+    "tabLogin": "Log in",
+    "tabRegister": "Create account",
+    "email": "Email",
+    "password": "Password",
+    "passwordHint": "At least 8 characters with upper and lower case letters and a digit.",
+    "submitLogin": "Log in",
+    "submitRegister": "Create account"
   },
   "notFound": {
     "title": "Page not found",
     "body": "This page doesn't exist."
+  },
+  "account": {
+    "title": "Account",
+    "signedInAs": "Signed in as {{email}}",
+    "logout": "Log out"
+  },
+  "auth": {
+    "errors": {
+      "invalidCredentials": "Email or password is wrong.",
+      "DuplicateUserName": "There is already an account for this email.",
+      "DuplicateEmail": "There is already an account for this email.",
+      "InvalidEmail": "Please enter a valid email address.",
+      "PasswordTooShort": "The password needs at least 8 characters.",
+      "PasswordRequiresDigit": "The password needs at least one digit.",
+      "PasswordRequiresUpper": "The password needs an upper case letter.",
+      "PasswordRequiresLower": "The password needs a lower case letter."
+    }
+  },
+  "myBikes": {
+    "title": "My bikes",
+    "add": "Register bike",
+    "emptyTitle": "No bike registered yet",
+    "emptyBody": "With frame number and photos your bike can be recognised after a theft."
+  },
+  "registerBike": {
+    "title": "Register bike",
+    "body": "The frame number is usually under the bottom bracket. You add photos in the next step.",
+    "submit": "Register bike"
+  },
+  "editBike": {
+    "title": "Edit bike",
+    "submit": "Save"
+  },
+  "bikeForm": {
+    "frameNumber": "Frame number",
+    "frameNumberHint": "Spaces and dashes don't matter.",
+    "feinCode": "FEIN code (optional)",
+    "feinCodeHint": "The police engraving. Stored encrypted only and never shown.",
+    "feinCodeStoredHint": "A FEIN code is stored. Leave empty to keep it.",
+    "feinCodeStoredPlaceholder": "stored",
+    "removeFeinCode": "Remove FEIN code",
+    "brand": "Brand",
+    "model": "Model",
+    "type": "Type",
+    "colorPrimary": "Main colour",
+    "colorSecondary": "Second colour (optional)",
+    "noColor": "None",
+    "features": "Features",
+    "isEbike": "E-bike",
+    "batterySerial": "Battery serial number",
+    "purchaseDate": "Purchase date"
+  },
+  "bikeDetail": {
+    "details": "Details",
+    "colors": "Colours",
+    "feinStored": "stored (encrypted)",
+    "edit": "Edit",
+    "delete": "Delete bike",
+    "deleteConfirm": "Permanently delete this bike and all its photos?",
+    "registered": "Bike registered. Now add photos – especially the side view and the frame number.",
+    "feinCode": "FEIN code"
+  },
+  "photos": {
+    "title": "Photos",
+    "privacyHint": "Location data (GPS) is removed automatically on upload.",
+    "receiptPrivate": "Only visible to you, never public.",
+    "uploading": "Uploading …",
+    "delete": "Delete photo",
+    "deleteConfirm": "Delete photo?",
+    "camera": "Camera",
+    "gallery": "Gallery"
+  },
+  "photoKind": {
+    "side": "Side view",
+    "frame_no": "Frame number",
+    "detail": "Details",
+    "receipt": "Receipt"
+  },
+  "bikeStatus": {
+    "active": "Registered",
+    "stolen": "Stolen",
+    "recovered": "Recovered"
+  },
+  "bikeType": {
+    "city": "City bike",
+    "trekking": "Trekking bike",
+    "mountain": "Mountain bike",
+    "road": "Road bike",
+    "gravel": "Gravel bike",
+    "cargo": "Cargo bike",
+    "folding": "Folding bike",
+    "kids": "Kids' bike",
+    "other": "Other"
+  },
+  "bikeColor": {
+    "black": "Black",
+    "white": "White",
+    "grey": "Grey",
+    "silver": "Silver",
+    "red": "Red",
+    "blue": "Blue",
+    "green": "Green",
+    "yellow": "Yellow",
+    "orange": "Orange",
+    "brown": "Brown",
+    "beige": "Beige",
+    "pink": "Pink",
+    "purple": "Purple",
+    "other": "Other"
+  },
+  "bikeFeature": {
+    "rack": "Rack",
+    "fenders": "Fenders",
+    "hub_dynamo": "Hub dynamo",
+    "lights": "Lights",
+    "kickstand": "Kickstand",
+    "basket": "Basket",
+    "child_seat": "Child seat",
+    "frame_lock": "Frame lock",
+    "suspension_fork": "Suspension fork",
+    "disc_brakes": "Disc brakes",
+    "coaster_brake": "Coaster brake",
+    "bell": "Bell"
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "loadFailed": "Could not be loaded.",
+    "saveFailed": "Saving failed. Please try again.",
+    "deleteFailed": "Deleting failed.",
+    "uploadFailed": "Upload failed.",
+    "required": "Required.",
+    "tooLong": "Too long.",
+    "invalidValue": "Invalid value.",
+    "emailInvalid": "Please enter a valid email address.",
+    "frameNumberInvalid": "The frame number needs 4–32 letters or digits.",
+    "frameNumberTaken": "This frame number is already registered. If it's your bike, ask the previous owner to transfer it.",
+    "feinCodeInvalid": "The FEIN code needs 6–32 letters or digits.",
+    "dateInFuture": "The date is in the future.",
+    "fileTooLarge": "The photo is too large (max. 15 MB).",
+    "unsupportedImage": "Please choose a JPEG, PNG or WebP photo.",
+    "tooManyPhotos": "At most 12 photos per bike.",
+    "rateLimited": "Too many attempts. Please wait a bit and try again."
   }
 }

@@ -13,6 +13,8 @@ public static class AuthConfigs
             {
               o.User.RequireUniqueEmail = true;
               o.Password.RequiredLength = 8;
+              // Upper, lower and digit are still required; symbols are a pain on a phone keyboard.
+              o.Password.RequireNonAlphanumeric = false;
             })
             .AddEntityFrameworkStores<AppDbContext>();
 

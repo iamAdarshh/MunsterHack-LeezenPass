@@ -1,3 +1,4 @@
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using FastEndpoints;
 using FastEndpoints.Swagger;
@@ -12,24 +13,23 @@ public static class MiddlewareConfig
 {
   public static async Task<WebApplication> UseAppMiddlewareAndMigrateDatabase(this WebApplication app)
   {
-    if (app.Environment.IsDevelopment())
+    // Generic message only, in every environment (the demo runs as Development): details go to the log.
+    app.UseDefaultExceptionHandler(useGenericReason: true);
+    if (!app.Environment.IsDevelopment())
     {
-      app.UseDeveloperExceptionPage();
-    }
-    else
-    {
-      // Generic message only: never leak exception details to clients.
-      app.UseDefaultExceptionHandler(useGenericReason: true);
       app.UseHsts();
     }
 
     app.UseAuthentication();
     app.UseAuthorization();
+    app.UseRateLimiter();
 
     app.UseFastEndpoints(c =>
     {
       c.Endpoints.RoutePrefix = "api";
-      c.Serializer.Options.Converters.Add(new JsonStringEnumConverter());
+      // Enums as snake_case strings, matching SPEC ("frame_no", "verified_transfer", ...).
+      c.Serializer.Options.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.SnakeCaseLower));
+      c.Errors.UseProblemDetails();
     });
 
     // register, login (?useCookies=true), manage/info, ... Logout is Features/Auth/Logout.

@@ -7,7 +7,8 @@ public static class ServiceConfigs
   public static IServiceCollection AddServiceConfigs(this IServiceCollection services, ILogger logger, WebApplicationBuilder builder)
   {
     services.AddInfrastructureServices(builder.Configuration, logger)
-            .AddAuthConfigs(builder.Environment);
+            .AddAuthConfigs(builder.Environment)
+            .AddRateLimitConfigs();
 
     return services;
   }

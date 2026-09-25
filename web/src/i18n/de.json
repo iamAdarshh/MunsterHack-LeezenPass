@@ -1,22 +1,32 @@
 {
-  "app": { "name": "LeezenPass" },
+  "app": {
+    "name": "LeezenPass"
+  },
   "nav": {
     "label": "Hauptnavigation",
     "check": "Prüfen",
     "myBikes": "Meine Räder",
     "stolen": "Gestohlen",
-    "login": "Login"
+    "login": "Login",
+    "account": "Konto"
   },
-  "demo": { "banner": "Demo-Daten – alle Räder und Meldungen sind erfunden" },
-  "language": { "switch": "Sprache wechseln" },
-  "common": { "comingSoon": "Diese Seite ist noch in Arbeit." },
+  "demo": {
+    "banner": "Demo-Daten – alle Räder und Meldungen sind erfunden"
+  },
+  "language": {
+    "switch": "Sprache wechseln"
+  },
+  "common": {
+    "comingSoon": "Diese Seite ist noch in Arbeit.",
+    "loading": "Lädt …",
+    "retry": "Erneut versuchen",
+    "back": "Zurück",
+    "yes": "Ja",
+    "no": "Nein"
+  },
   "check": {
     "title": "Rad prüfen",
     "body": "Vor dem Kauf: Rahmennummer oder FEIN-Code eingeben und sehen, ob das Rad als gestohlen gemeldet ist."
-  },
-  "myBikes": {
-    "title": "Meine Räder",
-    "body": "Registriere dein Rad mit Fotos und Rahmennummer und lade den Fahrradpass als PDF herunter."
   },
   "stolen": {
     "title": "Gestohlene Räder",
@@ -24,10 +34,158 @@
   },
   "login": {
     "title": "Anmelden",
-    "body": "Melde dich an, um deine Räder zu verwalten."
+    "tabLogin": "Anmelden",
+    "tabRegister": "Konto erstellen",
+    "email": "E-Mail",
+    "password": "Passwort",
+    "passwordHint": "Mindestens 8 Zeichen mit Groß- und Kleinbuchstaben und einer Ziffer.",
+    "submitLogin": "Anmelden",
+    "submitRegister": "Konto erstellen"
   },
   "notFound": {
     "title": "Seite nicht gefunden",
     "body": "Diese Seite gibt es nicht."
+  },
+  "account": {
+    "title": "Konto",
+    "signedInAs": "Angemeldet als {{email}}",
+    "logout": "Abmelden"
+  },
+  "auth": {
+    "errors": {
+      "invalidCredentials": "E-Mail oder Passwort ist falsch.",
+      "DuplicateUserName": "Für diese E-Mail gibt es schon ein Konto.",
+      "DuplicateEmail": "Für diese E-Mail gibt es schon ein Konto.",
+      "InvalidEmail": "Bitte gib eine gültige E-Mail-Adresse ein.",
+      "PasswordTooShort": "Das Passwort braucht mindestens 8 Zeichen.",
+      "PasswordRequiresDigit": "Das Passwort braucht mindestens eine Ziffer.",
+      "PasswordRequiresUpper": "Das Passwort braucht einen Großbuchstaben.",
+      "PasswordRequiresLower": "Das Passwort braucht einen Kleinbuchstaben."
+    }
+  },
+  "myBikes": {
+    "title": "Meine Räder",
+    "add": "Rad registrieren",
+    "emptyTitle": "Noch kein Rad registriert",
+    "emptyBody": "Mit Rahmennummer und Fotos kann dein Rad nach einem Diebstahl wiedererkannt werden."
+  },
+  "registerBike": {
+    "title": "Rad registrieren",
+    "body": "Die Rahmennummer findest du meist unter dem Tretlager. Fotos fügst du im nächsten Schritt hinzu.",
+    "submit": "Rad registrieren"
+  },
+  "editBike": {
+    "title": "Rad bearbeiten",
+    "submit": "Speichern"
+  },
+  "bikeForm": {
+    "frameNumber": "Rahmennummer",
+    "frameNumberHint": "Leerzeichen und Bindestriche sind egal.",
+    "feinCode": "FEIN-Code (optional)",
+    "feinCodeHint": "Die Polizei-Gravur. Wird nur verschlüsselt gespeichert und nie angezeigt.",
+    "feinCodeStoredHint": "Ein FEIN-Code ist gespeichert. Leer lassen, um ihn zu behalten.",
+    "feinCodeStoredPlaceholder": "gespeichert",
+    "removeFeinCode": "FEIN-Code entfernen",
+    "brand": "Marke",
+    "model": "Modell",
+    "type": "Typ",
+    "colorPrimary": "Hauptfarbe",
+    "colorSecondary": "Zweitfarbe (optional)",
+    "noColor": "Keine",
+    "features": "Merkmale",
+    "isEbike": "E-Bike",
+    "batterySerial": "Akku-Seriennummer",
+    "purchaseDate": "Kaufdatum"
+  },
+  "bikeDetail": {
+    "details": "Angaben",
+    "colors": "Farben",
+    "feinStored": "gespeichert (verschlüsselt)",
+    "edit": "Bearbeiten",
+    "delete": "Rad löschen",
+    "deleteConfirm": "Rad mit allen Fotos endgültig löschen?",
+    "registered": "Rad registriert. Füge jetzt Fotos hinzu – vor allem die Seitenansicht und die Rahmennummer.",
+    "feinCode": "FEIN-Code"
+  },
+  "photos": {
+    "title": "Fotos",
+    "privacyHint": "Standortdaten (GPS) werden beim Hochladen automatisch entfernt.",
+    "receiptPrivate": "Nur für dich sichtbar, nie öffentlich.",
+    "uploading": "Lädt hoch …",
+    "delete": "Foto löschen",
+    "deleteConfirm": "Foto löschen?",
+    "camera": "Kamera",
+    "gallery": "Galerie"
+  },
+  "photoKind": {
+    "side": "Seitenansicht",
+    "frame_no": "Rahmennummer",
+    "detail": "Details",
+    "receipt": "Kaufbeleg"
+  },
+  "bikeStatus": {
+    "active": "Registriert",
+    "stolen": "Gestohlen",
+    "recovered": "Wiedergefunden"
+  },
+  "bikeType": {
+    "city": "Stadtrad",
+    "trekking": "Trekkingrad",
+    "mountain": "Mountainbike",
+    "road": "Rennrad",
+    "gravel": "Gravelbike",
+    "cargo": "Lastenrad",
+    "folding": "Faltrad",
+    "kids": "Kinderrad",
+    "other": "Sonstiges"
+  },
+  "bikeColor": {
+    "black": "Schwarz",
+    "white": "Weiß",
+    "grey": "Grau",
+    "silver": "Silber",
+    "red": "Rot",
+    "blue": "Blau",
+    "green": "Grün",
+    "yellow": "Gelb",
+    "orange": "Orange",
+    "brown": "Braun",
+    "beige": "Beige",
+    "pink": "Rosa",
+    "purple": "Lila",
+    "other": "Andere"
+  },
+  "bikeFeature": {
+    "rack": "Gepäckträger",
+    "fenders": "Schutzbleche",
+    "hub_dynamo": "Nabendynamo",
+    "lights": "Licht",
+    "kickstand": "Ständer",
+    "basket": "Korb",
+    "child_seat": "Kindersitz",
+    "frame_lock": "Rahmenschloss",
+    "suspension_fork": "Federgabel",
+    "disc_brakes": "Scheibenbremsen",
+    "coaster_brake": "Rücktrittbremse",
+    "bell": "Klingel"
+  },
+  "errors": {
+    "generic": "Etwas ist schiefgelaufen. Bitte versuch es noch einmal.",
+    "loadFailed": "Konnte nicht geladen werden.",
+    "saveFailed": "Speichern fehlgeschlagen. Bitte versuch es noch einmal.",
+    "deleteFailed": "Löschen fehlgeschlagen.",
+    "uploadFailed": "Hochladen fehlgeschlagen.",
+    "required": "Pflichtfeld.",
+    "tooLong": "Zu lang.",
+    "invalidValue": "Ungültiger Wert.",
+    "emailInvalid": "Bitte gib eine gültige E-Mail-Adresse ein.",
+    "frameNumberInvalid": "Die Rahmennummer braucht 4–32 Buchstaben oder Ziffern.",
+    "frameNumberTaken": "Diese Rahmennummer ist bereits registriert. Falls es dein Rad ist, lass es dir vom Vorbesitzer übertragen.",
+    "feinCodeInvalid": "Der FEIN-Code braucht 6–32 Buchstaben oder Ziffern.",
+    "dateInFuture": "Das Datum liegt in der Zukunft.",
+    "fileTooLarge": "Das Foto ist zu groß (max. 15 MB).",
+    "unsupportedImage": "Bitte ein JPEG-, PNG- oder WebP-Foto wählen.",
+    "tooManyPhotos": "Maximal 12 Fotos pro Rad.",
+    "rateLimited": "Zu viele Versuche. Bitte warte etwas und versuch es dann noch einmal."
   }
 }

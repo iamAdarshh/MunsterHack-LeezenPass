@@ -62,3 +62,21 @@ async function readProblem(response: Response): Promise<ProblemDetails | null> {
     return null
   }
 }
+
+/**
+ * Field errors from a 400/409. Handles both FastEndpoints ({name, reason}[]) and
+ * ASP.NET Identity ({code: [message]}) shapes. Values are i18n keys or Identity error codes.
+ */
+export function fieldErrors(error: unknown): Record<string, string> {
+  if (!(error instanceof ApiError) || !error.problem?.errors) return {}
+  const errors = error.problem.errors
+  if (Array.isArray(errors)) {
+    return Object.fromEntries(errors.map((e) => [e.name, e.reason]))
+  }
+  return Object.fromEntries(Object.keys(errors).map((code) => [code, code]))
+}
+
+/** i18n key for a failed request that has no field errors. */
+export function requestErrorKey(error: unknown, fallback: string): string {
+  return error instanceof ApiError && error.status === 429 ? 'errors.rateLimited' : fallback
+}

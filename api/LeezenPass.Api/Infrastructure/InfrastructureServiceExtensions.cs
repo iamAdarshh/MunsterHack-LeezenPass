@@ -2,6 +2,7 @@ using LeezenPass.Api.Configurations;
 using LeezenPass.Api.Infrastructure.Captcha;
 using LeezenPass.Api.Infrastructure.Data;
 using LeezenPass.Api.Infrastructure.Email;
+using LeezenPass.Api.Infrastructure.Images;
 using LeezenPass.Api.Infrastructure.Pdf;
 using LeezenPass.Api.Infrastructure.Storage;
 using LeezenPass.Api.Infrastructure.Time;
@@ -29,6 +30,7 @@ public static class InfrastructureServiceExtensions
 
     services.AddSingleton<IClock, SystemClock>();
     services.AddSingleton<IPdfRenderer, QuestPdfRenderer>();
+    services.AddSingleton<ImageProcessor>();
 
     // Local disk until a MinIO implementation is needed.
     services.AddSingleton<IFileStorage, LocalFileStorage>();

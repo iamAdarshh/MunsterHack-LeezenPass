@@ -73,9 +73,11 @@ Indexes: unique `frame_no_norm`; index `frame_no_loose`, `fein_code_hash`; uniqu
 | POST | `/api/auth/register`, `/api/auth/login?useCookies=true` | Identity API endpoints | Public |
 | POST | `/api/auth/logout` | Custom (MapIdentityApi has no logout) | User |
 | GET | `/api/auth/manage/info` | Current user | User |
-| GET / POST | `/api/bikes` | List own / register | Owner |
+| GET / POST | `/api/bikes` | List own / register (409 if frame number already registered) | Owner |
 | GET / PUT / DELETE | `/api/bikes/{id}` | Manage bike | Owner |
-| POST | `/api/bikes/{id}/photos` | Upload photo (EXIF stripped) | Owner |
+| POST | `/api/bikes/{id}/photos` | Upload photo (multipart `file` + `kind`, header `X-LeezenPass: 1`; oriented, EXIF stripped, max 1600 px + 400 px thumb; rate policy `upload`) | Owner |
+| GET | `/api/bikes/{id}/photos/{photoId}?size=thumb` | Photo JPEG (full or thumbnail) | Owner |
+| DELETE | `/api/bikes/{id}/photos/{photoId}` | Delete photo | Owner |
 | POST | `/api/ai/extract` | Photo → suggested attributes | User |
 | GET | `/api/bikes/{id}/pass.pdf` | Bike pass PDF | Owner |
 | POST | `/api/bikes/{id}/theft` | Report stolen | Owner |

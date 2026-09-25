@@ -51,4 +51,34 @@ public class Bike
 
   public void SetFeinCode(FeinCode? feinCode, ReadOnlySpan<byte> secret) =>
     FeinCodeHash = feinCode?.ComputeHash(secret);
+
+  public void ClearFeinCode() => FeinCodeHash = null;
+
+  /// <summary>Descriptive attributes. Colours/features must be keys from <see cref="BikeCatalog"/>.</summary>
+  public void UpdateDetails(BikeDetails details)
+  {
+    Brand = Clean(details.Brand);
+    Model = Clean(details.Model);
+    Type = details.Type;
+    ColorPrimary = details.ColorPrimary;
+    ColorSecondary = details.ColorSecondary == details.ColorPrimary ? null : details.ColorSecondary;
+    IsEbike = details.IsEbike;
+    // A battery serial only makes sense on an e-bike.
+    BatterySerial = details.IsEbike ? Clean(details.BatterySerial) : null;
+    Features = details.Features.Distinct().Order(StringComparer.Ordinal).ToList();
+    PurchaseDate = details.PurchaseDate;
+  }
+
+  private static string? Clean(string? value) => string.IsNullOrWhiteSpace(value) ? null : value.Trim();
 }
+
+public sealed record BikeDetails(
+  string? Brand,
+  string? Model,
+  BikeType Type,
+  string? ColorPrimary,
+  string? ColorSecondary,
+  bool IsEbike,
+  string? BatterySerial,
+  IReadOnlyList<string> Features,
+  DateOnly? PurchaseDate);

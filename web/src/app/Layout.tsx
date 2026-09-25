@@ -3,6 +3,7 @@ import { NavLink, Outlet } from 'react-router'
 import { DemoBanner } from '../components/DemoBanner'
 import { AlertIcon, BikeIcon, SearchIcon, UserIcon } from '../components/icons'
 import { LanguageSwitch } from '../components/LanguageSwitch'
+import { useMe } from '../features/auth/api'
 
 const navItems = [
   { to: '/', labelKey: 'nav.check', Icon: SearchIcon },
@@ -13,6 +14,7 @@ const navItems = [
 
 export function Layout() {
   const { t } = useTranslation()
+  const me = useMe()
 
   return (
     <div className="mx-auto flex min-h-dvh max-w-screen-sm flex-col bg-white shadow-sm">
@@ -47,7 +49,7 @@ export function Layout() {
                 }
               >
                 <Icon className="size-6" />
-                {t(labelKey)}
+                {t(to === '/login' && me.data ? 'nav.account' : labelKey)}
               </NavLink>
             </li>
           ))}
