@@ -1,10 +1,12 @@
 using LeezenPass.Api.Domain.Bikes;
+using LeezenPass.Api.Domain.Theft;
 
 namespace LeezenPass.Api.Features.Bikes;
 
 /// <summary>Owner view of a bike. Never returned by public endpoints. The FEIN code itself is never returned.</summary>
 public sealed record BikeResponse(
   Guid Id,
+  string PublicToken,
   string FrameNumber,
   string? Brand,
   string? Model,
@@ -18,10 +20,13 @@ public sealed record BikeResponse(
   BikeStatus Status,
   bool HasFeinCode,
   DateTimeOffset CreatedAt,
-  IReadOnlyList<BikePhotoResponse> Photos)
+  IReadOnlyList<BikePhotoResponse> Photos,
+  TheftResponse? Theft)
 {
+  /// <summary>Needs Photos and the open theft report loaded (see <see cref="BikeQueries.WithDetails"/>).</summary>
   public static BikeResponse From(Bike bike) => new(
     bike.Id,
+    bike.PublicToken,
     bike.FrameNoRaw,
     bike.Brand,
     bike.Model,
@@ -35,7 +40,8 @@ public sealed record BikeResponse(
     bike.Status,
     bike.FeinCodeHash is not null,
     bike.CreatedAt,
-    bike.Photos.OrderBy(p => p.CreatedAt).Select(BikePhotoResponse.From).ToList());
+    bike.Photos.OrderBy(p => p.CreatedAt).Select(BikePhotoResponse.From).ToList(),
+    bike.OpenTheftReport is { } report ? TheftResponse.From(report) : null);
 }
 
 public sealed record BikePhotoResponse(Guid Id, PhotoKind Kind, string Url, string ThumbnailUrl)
@@ -45,4 +51,20 @@ public sealed record BikePhotoResponse(Guid Id, PhotoKind Kind, string Url, stri
     var url = $"/api/bikes/{photo.BikeId}/photos/{photo.Id}";
     return new BikePhotoResponse(photo.Id, photo.Kind, url, url + "?size=thumb");
   }
+}
+
+/// <summary>Owner view of the open theft report, including the exact location.</summary>
+public sealed record TheftResponse(
+  Guid Id,
+  DateTimeOffset StolenAt,
+  double Latitude,
+  double Longitude,
+  string District,
+  string? LocationNote,
+  LockType LockType,
+  string? PoliceCaseNo,
+  DateTimeOffset CreatedAt)
+{
+  public static TheftResponse From(TheftReport r) =>
+    new(r.Id, r.StolenAt, r.Latitude, r.Longitude, r.District, r.LocationNote, r.LockType, r.PoliceCaseNo, r.CreatedAt);
 }

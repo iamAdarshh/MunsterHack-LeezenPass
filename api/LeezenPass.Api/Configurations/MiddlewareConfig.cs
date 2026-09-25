@@ -41,9 +41,22 @@ public static class MiddlewareConfig
       app.MapScalarApiReference();
     }
 
+    WarnIfPublicUrlIsLocal(app);
     await MigrateDatabase(app);
 
     return app;
+  }
+
+  /// <summary>QR codes on the pass must open on a phone; localhost won't.</summary>
+  private static void WarnIfPublicUrlIsLocal(WebApplication app)
+  {
+    var url = app.Configuration[$"{AppOptions.Section}:{nameof(AppOptions.PublicBaseUrl)}"] ?? string.Empty;
+    if (url.Contains("localhost", StringComparison.OrdinalIgnoreCase) || url.Contains("127.0.0.1", StringComparison.Ordinal))
+    {
+      app.Logger.LogWarning(
+        "App:PublicBaseUrl is {Url}: QR codes on the bike pass won't open on a phone. For demos set App__PublicBaseUrl to the LAN/tunnel URL.",
+        url);
+    }
   }
 
   private static async Task MigrateDatabase(WebApplication app)

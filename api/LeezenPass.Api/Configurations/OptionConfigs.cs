@@ -11,6 +11,7 @@ public static class OptionConfigs
   public static IServiceCollection AddOptionConfigs(this IServiceCollection services, IConfiguration configuration)
   {
     services.Configure<FeaturesOptions>(configuration.GetSection(FeaturesOptions.Section))
+            .Configure<AppOptions>(configuration.GetSection(AppOptions.Section))
             .Configure<StorageOptions>(configuration.GetSection(StorageOptions.Section))
             .Configure<EmailOptions>(configuration.GetSection(EmailOptions.Section))
             .Configure<CaptchaOptions>(configuration.GetSection(CaptchaOptions.Section));

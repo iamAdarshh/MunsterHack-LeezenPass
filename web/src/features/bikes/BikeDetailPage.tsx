@@ -7,10 +7,12 @@ import { Button } from '../../components/Button'
 import { buttonClass } from '../../components/buttonClass'
 import { StatusBadge } from '../../components/StatusBadge'
 import { Alert, ErrorState, LoadingState } from '../../components/States'
+import { StolenPanel } from '../theft/StolenPanel'
 import { useBike, useDeleteBike } from './api'
 import { Swatch } from './Swatch'
 import { bikeTitle } from './format'
 import { PhotoSection } from './PhotoSection'
+import { useFormat } from '../../i18n/useFormat'
 
 export function BikeDetailPage() {
   const { t } = useTranslation()
@@ -31,6 +33,7 @@ export function BikeDetailPage() {
 
 function BikeDetail({ bike }: { bike: Bike }) {
   const { t } = useTranslation()
+  const format = useFormat()
   const location = useLocation()
   const justRegistered = (location.state as { justRegistered?: boolean } | null)?.justRegistered === true
 
@@ -49,6 +52,8 @@ function BikeDetail({ bike }: { bike: Bike }) {
           {t('bikeDetail.registered')}
         </p>
       )}
+
+      {bike.theft && <StolenPanel bike={bike} theft={bike.theft} />}
 
       <PhotoSection bike={bike} />
 
@@ -76,11 +81,19 @@ function BikeDetail({ bike }: { bike: Bike }) {
           {bike.features.length > 0 ? bike.features.map((f) => t(`bikeFeature.${f}`)).join(', ') : '–'}
         </Row>
         <Row label={t('bikeForm.purchaseDate')}>
-          {bike.purchaseDate ? new Date(bike.purchaseDate).toLocaleDateString() : '–'}
+          {bike.purchaseDate ? format.date(bike.purchaseDate) : '–'}
         </Row>
       </dl>
 
       <div className="mt-8 space-y-3">
+        {bike.status !== 'stolen' && (
+          <Link to={`/bikes/${bike.id}/theft`} className={buttonClass('danger', true)}>
+            {t('bikeDetail.reportStolen')}
+          </Link>
+        )}
+        <a href={`/api/bikes/${bike.id}/pass.pdf`} download className={buttonClass('secondary', true)}>
+          {t('bikeDetail.downloadPass')}
+        </a>
         <Link to={`/bikes/${bike.id}/edit`} className={buttonClass('secondary', true)}>
           {t('bikeDetail.edit')}
         </Link>

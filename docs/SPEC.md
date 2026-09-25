@@ -57,7 +57,7 @@ Police system integration, scraping marketplaces, payments, native apps, push no
 | bikes | id, owner_id, public_token, frame_no_raw, frame_no_norm, frame_no_loose, fein_code_hash, brand, model, type, color_primary, color_secondary, is_ebike, battery_serial, features, purchase_date, status (active/stolen/recovered), created_at |
 | bike_photos | id, bike_id, kind (side/frame_no/detail/receipt), path, embedding vector(512) nullable |
 | bike_ownership_history | id, bike_id, owner_id, from_at, to_at |
-| theft_reports | id, bike_id, stolen_at, location geography(Point,4326), location_note, lock_type, police_case_no, status (open/recovered/closed) |
+| theft_reports | id, bike_id, stolen_at, location geography(Point,4326), district (derived, the only public location), location_note (owner only), lock_type, police_case_no, status (open/recovered/closed) |
 | ownership_transfers | id, bike_id, from_user, to_user, code_hash, expires_at, completed_at |
 | sightings | id, reporter_id nullable, photo_path, location geography(Point,4326), seen_at, type, color, notes |
 | sighting_matches | sighting_id, bike_id, score, owner_decision (pending/mine/not_mine) |
@@ -79,16 +79,19 @@ Indexes: unique `frame_no_norm`; index `frame_no_loose`, `fein_code_hash`; uniqu
 | GET | `/api/bikes/{id}/photos/{photoId}?size=thumb` | Photo JPEG (full or thumbnail) | Owner |
 | DELETE | `/api/bikes/{id}/photos/{photoId}` | Delete photo | Owner |
 | POST | `/api/ai/extract` | Photo → suggested attributes | User |
-| GET | `/api/bikes/{id}/pass.pdf` | Bike pass PDF | Owner |
-| POST | `/api/bikes/{id}/theft` | Report stolen | Owner |
-| POST | `/api/bikes/{id}/recovered` | Mark recovered | Owner |
-| GET | `/api/stolen?bbox=&type=&color=` | Public stolen list | Public |
+| GET | `/api/bikes/{id}/pass.pdf` | Bike pass PDF (side photo, QR code to `/b/{token}`) | Owner |
+| POST | `/api/bikes/{id}/theft` | Report stolen (409 if already stolen) | Owner |
+| PUT | `/api/bikes/{id}/theft` | Update location note / police case number of the open report | Owner |
+| POST | `/api/bikes/{id}/recovered` | Mark recovered (409 if not stolen) | Owner |
+| GET | `/api/stolen?type=&color=&district=` | Public stolen list: no owner data, no frame number, district + date only, side/detail photos only. Filter by district, not bbox (a bbox over exact points could be narrowed to the exact spot) | Public |
+| GET | `/api/stolen/{token}` | One stolen bike (share card, QR tag page); 404 if not stolen | Public |
+| GET | `/api/stolen/{token}/photos/{photoId}?size=thumb` | Photo of a stolen bike (side/detail only, only while stolen) | Public |
 | POST | `/api/check` | Frame no. / FEIN → status | Public, rate-limited, captcha |
 | POST | `/api/bikes/{id}/transfers` | Create transfer code | Owner |
 | POST | `/api/transfers/claim` | Claim code | User |
 | GET | `/api/transfers/{id}/certificate.pdf` | Certificate PDF | New owner |
 | GET | `/api/verify/{token}` | Certificate verification | Public |
-| GET | `/b/{token}` (web route) + `GET /api/tags/{token}` | QR tag page data | Public |
+| GET | `/b/{token}` (web route) + `GET /api/tags/{token}` | QR tag page data. Until the stretch feature: `/b/{token}` shows the stolen card via `/api/stolen/{token}`, otherwise only "registered" | Public |
 | POST | `/api/tags/{token}/message` | Relay message | Public, rate-limited |
 | POST | `/api/sightings` | Report sighting | Public |
 | GET | `/api/bikes/{id}/matches` | Candidate matches | Owner |

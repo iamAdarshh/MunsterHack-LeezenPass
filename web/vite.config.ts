@@ -29,6 +29,18 @@ export default defineConfig(({ mode }) => {
         workbox: {
           // API responses are never served from the service worker cache.
           navigateFallbackDenylist: [/^\/api\//],
+          // Map tiles: keep what was viewed (e.g. during rehearsal) so the map still shows offline.
+          runtimeCaching: [
+            {
+              urlPattern: /^https:\/\/tile\.openstreetmap\.org\//,
+              handler: 'CacheFirst',
+              options: {
+                cacheName: 'osm-tiles',
+                expiration: { maxEntries: 500, maxAgeSeconds: 7 * 24 * 60 * 60 },
+                cacheableResponse: { statuses: [0, 200] },
+              },
+            },
+          ],
         },
       }),
     ],

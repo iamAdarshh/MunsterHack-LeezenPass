@@ -18,7 +18,7 @@ public class ListBikesEndpoint(AppDbContext db) : EndpointWithoutRequest<List<Bi
     var userId = User.GetUserId();
     var bikes = await db.Bikes
       .AsNoTracking()
-      .Include(b => b.Photos)
+      .WithDetails()
       .Where(b => b.OwnerId == userId)
       .OrderByDescending(b => b.CreatedAt)
       .ToListAsync(ct);

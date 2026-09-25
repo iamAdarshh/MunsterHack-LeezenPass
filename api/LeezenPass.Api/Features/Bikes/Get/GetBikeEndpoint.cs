@@ -24,7 +24,7 @@ public class GetBikeEndpoint(AppDbContext db) : Endpoint<GetBikeRequest, BikeRes
     // 404 (not 403) for other people's bikes, so ids don't leak existence.
     var bike = await db.Bikes
       .AsNoTracking()
-      .Include(b => b.Photos)
+      .WithDetails()
       .FirstOrDefaultAsync(b => b.Id == req.Id && b.OwnerId == userId, ct);
 
     if (bike is null)

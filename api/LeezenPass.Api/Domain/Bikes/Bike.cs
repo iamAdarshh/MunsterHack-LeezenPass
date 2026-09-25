@@ -1,5 +1,6 @@
 using System.Buffers.Text;
 using System.Security.Cryptography;
+using LeezenPass.Api.Domain.Theft;
 
 namespace LeezenPass.Api.Domain.Bikes;
 
@@ -41,6 +42,10 @@ public class Bike
   public DateTimeOffset CreatedAt { get; private set; }
 
   public List<BikePhoto> Photos { get; private set; } = [];
+  public List<TheftReport> TheftReports { get; private set; } = [];
+
+  /// <summary>The report that made the bike stolen, if it is stolen right now. Needs TheftReports loaded.</summary>
+  public TheftReport? OpenTheftReport => TheftReports.FirstOrDefault(t => t.Status == TheftReportStatus.Open);
 
   public void SetFrameNumber(FrameNumber frameNumber)
   {
@@ -53,6 +58,36 @@ public class Bike
     FeinCodeHash = feinCode?.ComputeHash(secret);
 
   public void ClearFeinCode() => FeinCodeHash = null;
+
+  public bool CanReportStolen => Status != BikeStatus.Stolen;
+
+  public bool CanMarkRecovered => Status == BikeStatus.Stolen;
+
+  /// <summary>Opens a theft report and puts the bike on the public stolen list. Not allowed while already stolen.</summary>
+  public TheftReport ReportStolen(DateTimeOffset stolenAt, double latitude, double longitude, LockType lockType, DateTimeOffset now)
+  {
+    if (!CanReportStolen)
+    {
+      throw new InvalidOperationException("Bike is already reported stolen.");
+    }
+
+    var report = new TheftReport(Id, stolenAt, latitude, longitude, lockType, now);
+    TheftReports.Add(report);
+    Status = BikeStatus.Stolen;
+    return report;
+  }
+
+  /// <summary>Takes the bike off the public stolen list. Needs TheftReports loaded.</summary>
+  public void MarkRecovered()
+  {
+    if (!CanMarkRecovered)
+    {
+      throw new InvalidOperationException("Only stolen bikes can be marked as recovered.");
+    }
+
+    OpenTheftReport?.MarkRecovered();
+    Status = BikeStatus.Recovered;
+  }
 
   /// <summary>Descriptive attributes. Colours/features must be keys from <see cref="BikeCatalog"/>.</summary>
   public void UpdateDetails(BikeDetails details)

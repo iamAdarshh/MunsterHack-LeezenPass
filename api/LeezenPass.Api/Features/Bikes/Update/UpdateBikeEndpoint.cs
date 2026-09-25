@@ -21,7 +21,7 @@ public class UpdateBikeEndpoint(AppDbContext db, IOptions<FeinOptions> fein) : E
   {
     var userId = User.GetUserId();
     var bike = await db.Bikes
-      .Include(b => b.Photos)
+      .WithDetails()
       .FirstOrDefaultAsync(b => b.Id == req.Id && b.OwnerId == userId, ct);
     if (bike is null)
     {

@@ -30,6 +30,9 @@ public class BikeConfiguration : IEntityTypeConfiguration<Bike>
     builder.HasIndex(b => b.OwnerId);
 
     builder.HasOne<AppUser>().WithMany().HasForeignKey(b => b.OwnerId).OnDelete(DeleteBehavior.Cascade);
+    builder.Ignore(b => b.OpenTheftReport);
+    builder.Ignore(b => b.CanReportStolen);
+    builder.Ignore(b => b.CanMarkRecovered);
     builder.HasMany(b => b.Photos).WithOne().HasForeignKey(p => p.BikeId).OnDelete(DeleteBehavior.Cascade);
   }
 }

@@ -42,9 +42,60 @@ export interface BikePhoto {
   thumbnailUrl: string
 }
 
+export const lockTypes = ['u_bolt', 'chain', 'folding', 'cable', 'frame', 'none', 'other'] as const
+export type LockType = (typeof lockTypes)[number]
+
+/** Mirrors Domain/Theft/MuensterDistricts.cs. */
+export const districts = [
+  'altstadt', 'kreuzviertel', 'mauritz', 'hansaviertel', 'suedviertel', 'geist', 'aaseestadt', 'sentrup',
+  'gievenbeck', 'mecklenbeck', 'roxel', 'albachten', 'nienberge', 'kinderhaus', 'coerde', 'sprakel', 'gelmer',
+  'handorf', 'gremmendorf', 'angelmodde', 'wolbeck', 'berg_fidel', 'hiltrup', 'amelsbueren', 'outside',
+] as const
+export type District = (typeof districts)[number]
+
+/** Owner view of the open theft report (exact location included). */
+export interface Theft {
+  id: string
+  stolenAt: string
+  latitude: number
+  longitude: number
+  district: District
+  locationNote: string | null
+  lockType: LockType
+  policeCaseNo: string | null
+  createdAt: string
+}
+
+export interface TheftInput {
+  stolenAt: string
+  latitude: number
+  longitude: number
+  lockType: LockType
+  locationNote: string | null
+  policeCaseNo: string | null
+}
+
+/** Public view: no owner data, no frame number, district and date only. */
+export interface StolenBike {
+  token: string
+  type: BikeType
+  brand: string | null
+  model: string | null
+  colorPrimary: BikeColor | null
+  colorSecondary: BikeColor | null
+  isEbike: boolean
+  features: BikeFeature[]
+  stolenOn: string
+  district: District
+  policeReported: boolean
+  photos: BikePhoto[]
+}
+
 /** Owner view. The FEIN code is never sent back, only whether one is stored. */
 export interface Bike {
   id: string
+  /** Unguessable id used in public links (/stolen/…, /b/…). */
+  publicToken: string
   frameNumber: string
   brand: string | null
   model: string | null
@@ -59,6 +110,8 @@ export interface Bike {
   hasFeinCode: boolean
   createdAt: string
   photos: BikePhoto[]
+  /** Open theft report while the bike is stolen. */
+  theft: Theft | null
 }
 
 export interface BikeInput {

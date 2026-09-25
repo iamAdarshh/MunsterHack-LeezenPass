@@ -30,7 +30,17 @@
   },
   "stolen": {
     "title": "Stolen bikes",
-    "body": "Bikes currently reported stolen in Münster. Seen one? Call 110, don't confront anyone."
+    "callPolice": "Seen one? Call 110 and don't confront anyone.",
+    "color": "Colour",
+    "district": "District",
+    "all": "All",
+    "empty": "No stolen bikes for these filters.",
+    "policeReported": "Police reported",
+    "selfReported": "Self-reported",
+    "badge": "Stolen",
+    "stolenOnIn": "Stolen on {{date}} · {{district}}",
+    "notStolenTitle": "Not reported stolen",
+    "notStolenBody": "This bike is not (or no longer) on the list of stolen bikes."
   },
   "login": {
     "title": "Log in",
@@ -105,7 +115,9 @@
     "delete": "Delete bike",
     "deleteConfirm": "Permanently delete this bike and all its photos?",
     "registered": "Bike registered. Now add photos – especially the side view and the frame number.",
-    "feinCode": "FEIN code"
+    "feinCode": "FEIN code",
+    "reportStolen": "Report as stolen",
+    "downloadPass": "Bike pass (PDF)"
   },
   "photos": {
     "title": "Photos",
@@ -186,6 +198,95 @@
     "fileTooLarge": "The photo is too large (max. 15 MB).",
     "unsupportedImage": "Please choose a JPEG, PNG or WebP photo.",
     "tooManyPhotos": "At most 12 photos per bike.",
-    "rateLimited": "Too many attempts. Please wait a bit and try again."
+    "rateLimited": "Too many attempts. Please wait a bit and try again.",
+    "locationRequired": "Please set a point on the map.",
+    "dateTooOld": "The date is too far in the past.",
+    "alreadyStolen": "This bike is already reported stolen.",
+    "notStolen": "This bike is not reported stolen."
+  },
+  "reportTheft": {
+    "title": "Report theft",
+    "intro": "Your bike then appears in the public list of stolen bikes – district only, without your data and without the exact location.",
+    "stolenAt": "When was it stolen (roughly)?",
+    "location": "Where was the bike?",
+    "locationHint": "Tap the map or use your location. Only the district is shown publicly.",
+    "locationNote": "Location description (optional)",
+    "locationNoteHint": "E.g. “bike rack at the main station”. Only for you and the police summary, never public.",
+    "lockType": "Lock",
+    "policeCaseNo": "Police case number (optional)",
+    "policeCaseNoHint": "You can also add it later.",
+    "submit": "Report theft"
+  },
+  "map": {
+    "useMyLocation": "Use my location",
+    "locationFailed": "Location not available. Tap the map instead."
+  },
+  "lockType": {
+    "u_bolt": "U-lock",
+    "chain": "Chain lock",
+    "folding": "Folding lock",
+    "cable": "Cable lock",
+    "frame": "Frame lock",
+    "none": "Not locked",
+    "other": "Other"
+  },
+  "stolenPanel": {
+    "title": "Reported stolen",
+    "when": "Since {{date}} · {{district}}",
+    "publicHint": "It is on the public list (district only, no personal data).",
+    "policeTitle": "Report to the police",
+    "policeBody": "Copy the summary and paste it into the Polizei NRW Internetwache (online police station).",
+    "copySummary": "Copy summary",
+    "openInternetwache": "Open Internetwache NRW",
+    "showSummary": "Show summary",
+    "caseNoTitle": "Add case number",
+    "caseNoHint": "With a case number your report is marked as “police reported”.",
+    "saved": "Saved.",
+    "insuranceTitle": "Tell your insurance",
+    "insuranceBody": "Report the theft to your household or bike insurance right away. They usually need the case number, the receipt and the bike pass.",
+    "shareTitle": "Spread the word",
+    "shareBody": "Share the report in messengers and social media. The more people know the bike, the sooner it turns up.",
+    "recovered": "Bike recovered",
+    "recoveredConfirm": "Mark the bike as recovered? It will be removed from the public list."
+  },
+  "share": {
+    "button": "Share",
+    "copied": "Link copied",
+    "copyManually": "Copy link:",
+    "stolenTitle": "Bike stolen – LeezenPass",
+    "stolenText": "This bike was stolen in Münster ({{district}}). Seen it? Please call 110."
+  },
+  "tag": {
+    "registeredTitle": "Registered with LeezenPass",
+    "registeredBody": "No theft has been reported for this bike. Buying a used bike? Check the frame number first.",
+    "unknownTitle": "Unknown code",
+    "unknownBody": "This QR code does not belong to any registered bike. Be careful when buying: check the frame number."
+  },
+  "district": {
+    "altstadt": "Altstadt",
+    "kreuzviertel": "Kreuzviertel",
+    "mauritz": "Mauritz",
+    "hansaviertel": "Hansaviertel / Harbour",
+    "suedviertel": "Südviertel",
+    "geist": "Geist",
+    "aaseestadt": "Aaseestadt",
+    "sentrup": "Sentrup",
+    "gievenbeck": "Gievenbeck",
+    "mecklenbeck": "Mecklenbeck",
+    "roxel": "Roxel",
+    "albachten": "Albachten",
+    "nienberge": "Nienberge",
+    "kinderhaus": "Kinderhaus",
+    "coerde": "Coerde",
+    "sprakel": "Sprakel",
+    "gelmer": "Gelmer",
+    "handorf": "Handorf",
+    "gremmendorf": "Gremmendorf",
+    "angelmodde": "Angelmodde",
+    "wolbeck": "Wolbeck",
+    "berg_fidel": "Berg Fidel",
+    "hiltrup": "Hiltrup",
+    "amelsbueren": "Amelsbüren",
+    "outside": "outside Münster"
   }
 }

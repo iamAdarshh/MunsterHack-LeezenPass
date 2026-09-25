@@ -266,6 +266,12 @@ namespace LeezenPass.Api.Infrastructure.Data.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
 
+                    b.Property<string>("District")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("district");
+
                     b.Property<Point>("Location")
                         .IsRequired()
                         .HasColumnType("geography (point, 4326)")
@@ -307,6 +313,14 @@ namespace LeezenPass.Api.Infrastructure.Data.Migrations
                         .HasDatabaseName("ix_theft_reports_location");
 
                     NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("Location"), "gist");
+
+                    b.HasIndex("Status", "StolenAt")
+                        .HasDatabaseName("ix_theft_reports_status_stolen_at");
+
+                    b.HasIndex(new[] { "BikeId" }, "OneOpenReportPerBike")
+                        .IsUnique()
+                        .HasDatabaseName("ux_theft_reports_bike_id_open")
+                        .HasFilter("status = 'Open'");
 
                     b.ToTable("theft_reports", (string)null);
                 });
@@ -659,7 +673,7 @@ namespace LeezenPass.Api.Infrastructure.Data.Migrations
             modelBuilder.Entity("LeezenPass.Api.Domain.Theft.TheftReport", b =>
                 {
                     b.HasOne("LeezenPass.Api.Domain.Bikes.Bike", null)
-                        .WithMany()
+                        .WithMany("TheftReports")
                         .HasForeignKey("BikeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
@@ -749,6 +763,8 @@ namespace LeezenPass.Api.Infrastructure.Data.Migrations
             modelBuilder.Entity("LeezenPass.Api.Domain.Bikes.Bike", b =>
                 {
                     b.Navigation("Photos");
+
+                    b.Navigation("TheftReports");
                 });
 #pragma warning restore 612, 618
         }

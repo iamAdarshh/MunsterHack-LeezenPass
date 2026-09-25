@@ -18,29 +18,63 @@ public class QuestPdfRenderer : IPdfRenderer
 
         page.Header().Column(col =>
         {
-          col.Item().Text(document.Title).FontSize(22).Bold();
+          col.Item().Text(document.Title).FontSize(22).Bold().FontColor("#0f766e");
           col.Item().Text(document.Subtitle).FontSize(12).FontColor(Colors.Grey.Darken1);
         });
 
-        page.Content().PaddingVertical(1, Unit.Centimetre).Table(table =>
+        page.Content().PaddingVertical(0.8f, Unit.Centimetre).Column(col =>
         {
-          table.ColumnsDefinition(c =>
+          col.Spacing(12);
+
+          if (document.Image is not null)
           {
-            c.ConstantColumn(5, Unit.Centimetre);
-            c.RelativeColumn();
+            col.Item().MaxHeight(7, Unit.Centimetre).AlignCenter().Image(document.Image).FitArea();
+          }
+
+          col.Item().Table(table =>
+          {
+            table.ColumnsDefinition(c =>
+            {
+              c.ConstantColumn(5.5f, Unit.Centimetre);
+              c.RelativeColumn();
+            });
+
+            foreach (var field in document.Fields)
+            {
+              table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).PaddingVertical(4).Text(field.Label).SemiBold();
+              table.Cell().BorderBottom(0.5f).BorderColor(Colors.Grey.Lighten2).PaddingVertical(4).Text(field.Value);
+            }
           });
 
-          foreach (var field in document.Fields)
+          if (document.QrCodeText is not null)
           {
-            table.Cell().PaddingVertical(4).Text(field.Label).SemiBold();
-            table.Cell().PaddingVertical(4).Text(field.Value);
+            col.Item().PaddingTop(8).Row(row =>
+            {
+              row.ConstantItem(3.5f, Unit.Centimetre).Image(QrCodes.Png(document.QrCodeText));
+              row.RelativeItem().PaddingLeft(12).AlignMiddle().Column(text =>
+              {
+                if (document.QrCaption is not null)
+                {
+                  text.Item().Text(document.QrCaption);
+                }
+
+                text.Item().Text(document.QrCodeText).FontSize(9).FontColor(Colors.Grey.Darken1);
+              });
+            });
           }
         });
 
-        if (document.Footer is not null)
+        page.Footer().Row(row =>
         {
-          page.Footer().Text(document.Footer).FontSize(9).FontColor(Colors.Grey.Darken1);
-        }
+          row.RelativeItem().Text(document.Footer ?? string.Empty).FontSize(9).FontColor(Colors.Grey.Darken1);
+          row.ConstantItem(2, Unit.Centimetre).AlignRight().Text(x =>
+          {
+            x.DefaultTextStyle(s => s.FontSize(9).FontColor(Colors.Grey.Darken1));
+            x.CurrentPageNumber();
+            x.Span(" / ");
+            x.TotalPages();
+          });
+        });
       });
     }).GeneratePdf();
 }

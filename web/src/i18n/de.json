@@ -30,7 +30,17 @@
   },
   "stolen": {
     "title": "Gestohlene Räder",
-    "body": "Aktuell gestohlen gemeldete Räder in Münster. Gesehen? Ruf 110 an, sprich niemanden an."
+    "callPolice": "Gesehen? Ruf 110 an und sprich niemanden an.",
+    "color": "Farbe",
+    "district": "Stadtteil",
+    "all": "Alle",
+    "empty": "Keine gestohlenen Räder für diese Filter.",
+    "policeReported": "Polizeilich gemeldet",
+    "selfReported": "Selbst gemeldet",
+    "badge": "Gestohlen",
+    "stolenOnIn": "Gestohlen am {{date}} · {{district}}",
+    "notStolenTitle": "Nicht als gestohlen gemeldet",
+    "notStolenBody": "Dieses Rad steht nicht (mehr) in der Liste gestohlener Räder."
   },
   "login": {
     "title": "Anmelden",
@@ -105,7 +115,9 @@
     "delete": "Rad löschen",
     "deleteConfirm": "Rad mit allen Fotos endgültig löschen?",
     "registered": "Rad registriert. Füge jetzt Fotos hinzu – vor allem die Seitenansicht und die Rahmennummer.",
-    "feinCode": "FEIN-Code"
+    "feinCode": "FEIN-Code",
+    "reportStolen": "Als gestohlen melden",
+    "downloadPass": "Fahrradpass (PDF)"
   },
   "photos": {
     "title": "Fotos",
@@ -186,6 +198,95 @@
     "fileTooLarge": "Das Foto ist zu groß (max. 15 MB).",
     "unsupportedImage": "Bitte ein JPEG-, PNG- oder WebP-Foto wählen.",
     "tooManyPhotos": "Maximal 12 Fotos pro Rad.",
-    "rateLimited": "Zu viele Versuche. Bitte warte etwas und versuch es dann noch einmal."
+    "rateLimited": "Zu viele Versuche. Bitte warte etwas und versuch es dann noch einmal.",
+    "locationRequired": "Bitte setze einen Punkt auf der Karte.",
+    "dateTooOld": "Das Datum liegt zu weit zurück.",
+    "alreadyStolen": "Dieses Rad ist bereits als gestohlen gemeldet.",
+    "notStolen": "Dieses Rad ist nicht als gestohlen gemeldet."
+  },
+  "reportTheft": {
+    "title": "Diebstahl melden",
+    "intro": "Dein Rad erscheint danach in der öffentlichen Liste gestohlener Räder – nur mit Stadtteil, ohne deine Daten und ohne genauen Ort.",
+    "stolenAt": "Wann wurde es gestohlen (ungefähr)?",
+    "location": "Wo stand das Rad?",
+    "locationHint": "Tippe auf die Karte oder nutze deinen Standort. Öffentlich wird nur der Stadtteil angezeigt.",
+    "locationNote": "Ortsbeschreibung (optional)",
+    "locationNoteHint": "Z. B. „Fahrradständer am Hauptbahnhof“. Nur für dich und die Polizei-Zusammenfassung, nie öffentlich.",
+    "lockType": "Schloss",
+    "policeCaseNo": "Polizeiliches Aktenzeichen (optional)",
+    "policeCaseNoHint": "Kannst du auch später ergänzen.",
+    "submit": "Diebstahl melden"
+  },
+  "map": {
+    "useMyLocation": "Meinen Standort verwenden",
+    "locationFailed": "Standort nicht verfügbar. Tippe stattdessen auf die Karte."
+  },
+  "lockType": {
+    "u_bolt": "Bügelschloss",
+    "chain": "Kettenschloss",
+    "folding": "Faltschloss",
+    "cable": "Kabelschloss",
+    "frame": "Rahmenschloss",
+    "none": "Nicht abgeschlossen",
+    "other": "Anderes"
+  },
+  "stolenPanel": {
+    "title": "Als gestohlen gemeldet",
+    "when": "Seit {{date}} · {{district}}",
+    "publicHint": "Es steht in der öffentlichen Liste (nur Stadtteil, keine persönlichen Daten).",
+    "policeTitle": "Anzeige bei der Polizei",
+    "policeBody": "Kopiere die Zusammenfassung und füge sie in der Internetwache der Polizei NRW ein.",
+    "copySummary": "Zusammenfassung kopieren",
+    "openInternetwache": "Internetwache NRW öffnen",
+    "showSummary": "Zusammenfassung anzeigen",
+    "caseNoTitle": "Aktenzeichen eintragen",
+    "caseNoHint": "Mit Aktenzeichen wird deine Meldung als „polizeilich gemeldet“ markiert.",
+    "saved": "Gespeichert.",
+    "insuranceTitle": "Versicherung informieren",
+    "insuranceBody": "Melde den Diebstahl sofort deiner Hausrat- oder Fahrradversicherung. Meist brauchst du das Aktenzeichen, den Kaufbeleg und den Fahrradpass.",
+    "shareTitle": "Weitersagen",
+    "shareBody": "Teile die Meldung in Messengern und sozialen Netzen. Je mehr Leute das Rad kennen, desto eher taucht es auf.",
+    "recovered": "Rad wiedergefunden",
+    "recoveredConfirm": "Rad als wiedergefunden markieren? Es verschwindet dann aus der öffentlichen Liste."
+  },
+  "share": {
+    "button": "Teilen",
+    "copied": "Link kopiert",
+    "copyManually": "Link kopieren:",
+    "stolenTitle": "Fahrrad gestohlen – LeezenPass",
+    "stolenText": "Dieses Fahrrad wurde in Münster ({{district}}) gestohlen. Gesehen? Bitte 110 anrufen."
+  },
+  "tag": {
+    "registeredTitle": "Bei LeezenPass registriert",
+    "registeredBody": "Für dieses Rad ist kein Diebstahl gemeldet. Du willst ein gebrauchtes Rad kaufen? Prüfe vorher die Rahmennummer.",
+    "unknownTitle": "Unbekannter Code",
+    "unknownBody": "Dieser QR-Code gehört zu keinem registrierten Rad. Vorsicht bei einem Kauf: Prüfe die Rahmennummer."
+  },
+  "district": {
+    "altstadt": "Altstadt",
+    "kreuzviertel": "Kreuzviertel",
+    "mauritz": "Mauritz",
+    "hansaviertel": "Hansaviertel / Hafen",
+    "suedviertel": "Südviertel",
+    "geist": "Geist",
+    "aaseestadt": "Aaseestadt",
+    "sentrup": "Sentrup",
+    "gievenbeck": "Gievenbeck",
+    "mecklenbeck": "Mecklenbeck",
+    "roxel": "Roxel",
+    "albachten": "Albachten",
+    "nienberge": "Nienberge",
+    "kinderhaus": "Kinderhaus",
+    "coerde": "Coerde",
+    "sprakel": "Sprakel",
+    "gelmer": "Gelmer",
+    "handorf": "Handorf",
+    "gremmendorf": "Gremmendorf",
+    "angelmodde": "Angelmodde",
+    "wolbeck": "Wolbeck",
+    "berg_fidel": "Berg Fidel",
+    "hiltrup": "Hiltrup",
+    "amelsbueren": "Amelsbüren",
+    "outside": "außerhalb Münsters"
   }
 }
