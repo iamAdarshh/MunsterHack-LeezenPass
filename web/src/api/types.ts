@@ -129,3 +129,15 @@ export interface BikeInput {
   features: BikeFeature[]
   purchaseDate: string | null
 }
+
+/** POST /api/ai/extract. Suggestions only: the user confirms everything in the form. */
+export interface VisionSuggestion {
+  type: BikeType | null
+  colorPrimary: BikeColor | null
+  colorSecondary: BikeColor | null
+  brandGuess: string | null
+  features: BikeFeature[]
+  frameNumberCandidate: string | null
+  /** 0..1 */
+  confidence: number
+}

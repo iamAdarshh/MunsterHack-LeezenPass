@@ -19,6 +19,22 @@ public class ImageProcessor
 
   public ProcessedImage Process(Stream input)
   {
+    using var oriented = DecodeUpright(input);
+    var (full, width, height) = EncodeJpeg(oriented, MaxEdge);
+    var (thumbnail, _, _) = EncodeJpeg(oriented, ThumbnailEdge);
+
+    return new ProcessedImage(full, thumbnail, width, height);
+  }
+
+  /// <summary>Single upright JPEG without metadata, e.g. for sending to the vision model.</summary>
+  public byte[] ToJpeg(Stream input, int maxEdge)
+  {
+    using var oriented = DecodeUpright(input);
+    return EncodeJpeg(oriented, maxEdge).Bytes;
+  }
+
+  private static SKBitmap DecodeUpright(Stream input)
+  {
     using var data = SKData.Create(input) ?? throw new InvalidImageException("Unreadable image.");
     using var codec = SKCodec.Create(data) ?? throw new InvalidImageException("Unsupported image format.");
     if ((long)codec.Info.Width * codec.Info.Height > MaxInputPixels)
@@ -27,11 +43,7 @@ public class ImageProcessor
     }
 
     using var decoded = SKBitmap.Decode(codec) ?? throw new InvalidImageException("Unreadable image.");
-    using var oriented = Orient(decoded, codec.EncodedOrigin);
-    var (full, width, height) = EncodeJpeg(oriented, MaxEdge);
-    var (thumbnail, _, _) = EncodeJpeg(oriented, ThumbnailEdge);
-
-    return new ProcessedImage(full, thumbnail, width, height);
+    return Orient(decoded, codec.EncodedOrigin);
   }
 
   /// <summary>Draws the pixels upright onto a new opaque bitmap (transparent areas become white).</summary>

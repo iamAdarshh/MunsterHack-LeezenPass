@@ -29,10 +29,26 @@ Open http://localhost:5173. On a phone in the same Wi-Fi: `npm run dev -- --host
 Dev config lives in `api/LeezenPass.Api/appsettings.Development.json` (fakes on, demo mode on, dev-only secrets).
 Every config key is documented in [infra/.env.example](infra/.env.example).
 
+## AI photo prefill (LM Studio)
+
+The Register page can suggest type, colours, brand and frame number from photos. In development this uses
+**Qwen3-VL-8B** running locally in [LM Studio](https://lmstudio.ai) (about 6 GB of RAM, works offline):
+
+```bash
+~/.lmstudio/bin/lms get qwen/qwen3-vl-8b                          # once, ~5.8 GB
+~/.lmstudio/bin/lms server start                                  # OpenAI-compatible API on :1234
+~/.lmstudio/bin/lms load qwen/qwen3-vl-8b --context-length 8192   # ~16 s
+~/.lmstudio/bin/lms unload --all                                  # free the RAM again
+```
+
+If LM Studio isn't running, the form simply stays manual. To use canned suggestions instead set
+`Vision__Provider=Fake`. Load the model before the pitch: the API warms it up at startup, but a cold load takes ~16 s.
+
 ## Offline / demo mode
 
-`Features:UseFakes=true` (default in Development) swaps email, captcha and AI vision for fakes, so the demo works
-without Wi-Fi. `Features:DemoMode=true` makes the web app show the "Demo-Daten" banner.
+`Features:UseFakes=true` (default in Development) swaps email and captcha for fakes, so the demo works without
+Wi-Fi. AI vision follows `Vision:Provider` instead: Development uses the local LM Studio model (works offline too);
+set `Vision__Provider=Fake` for canned suggestions without LM Studio. `Features:DemoMode=true` makes the web app show the "Demo-Daten" banner.
 
 ## Everyday commands
 

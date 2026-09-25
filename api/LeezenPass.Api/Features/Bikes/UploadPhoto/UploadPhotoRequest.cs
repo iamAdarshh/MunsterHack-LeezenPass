@@ -27,7 +27,7 @@ public static class PhotoKinds
 public class UploadPhotoValidator : Validator<UploadPhotoRequest>
 {
   public const long MaxBytes = 15 * 1024 * 1024;
-  private static readonly HashSet<string> AllowedTypes = ["image/jpeg", "image/png", "image/webp"];
+  public static readonly IReadOnlySet<string> AllowedTypes = new HashSet<string> { "image/jpeg", "image/png", "image/webp" };
 
   public UploadPhotoValidator()
   {

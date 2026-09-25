@@ -81,7 +81,7 @@
   },
   "registerBike": {
     "title": "Register bike",
-    "body": "The frame number is usually under the bottom bracket. You add photos in the next step.",
+    "body": "The frame number is usually under the bottom bracket.",
     "submit": "Register bike"
   },
   "editBike": {
@@ -117,7 +117,9 @@
     "registered": "Bike registered. Now add photos – especially the side view and the frame number.",
     "feinCode": "FEIN code",
     "reportStolen": "Report as stolen",
-    "downloadPass": "Bike pass (PDF)"
+    "downloadPass": "Bike pass (PDF)",
+    "registeredWithPhotos": "Bike registered, photos saved.",
+    "photoUploadFailed": "A photo could not be saved – please add it again below."
   },
   "photos": {
     "title": "Photos",
@@ -202,7 +204,8 @@
     "locationRequired": "Please set a point on the map.",
     "dateTooOld": "The date is too far in the past.",
     "alreadyStolen": "This bike is already reported stolen.",
-    "notStolen": "This bike is not reported stolen."
+    "notStolen": "This bike is not reported stolen.",
+    "aiUnavailable": "Automatic recognition not available right now."
   },
   "reportTheft": {
     "title": "Report theft",
@@ -288,5 +291,31 @@
     "hiltrup": "Hiltrup",
     "amelsbueren": "Amelsbüren",
     "outside": "outside Münster"
+  },
+  "aiPrefill": {
+    "title": "Faster with photos (optional)",
+    "body": "The AI suggests type, colours, brand and frame number. You check everything before it is saved. Photos are only uploaded when you save.",
+    "slot": {
+      "side": "Side view",
+      "frame_no": "Frame number"
+    },
+    "hint": {
+      "side": "Whole bike from the side – for type, colours, brand.",
+      "frame_no": "Close-up of the stamped number, usually under the bottom bracket."
+    },
+    "analysing": "Recognising …",
+    "failed": "Automatic recognition not available right now – please fill in yourself.",
+    "frameFound": "Found:",
+    "frameNotFound": "No number readable – get closer or type it in.",
+    "applied": "Suggestions filled in",
+    "notApplied": "Unsure – please check type and colours yourself",
+    "confidence": "Confidence: {{level}}",
+    "level": {
+      "high": "high",
+      "medium": "medium",
+      "low": "low"
+    },
+    "review": "Suggestions from the photos have been filled in. Please check them before saving.",
+    "reviewFrame": "Compare the frame number character by character with the frame."
   }
 }

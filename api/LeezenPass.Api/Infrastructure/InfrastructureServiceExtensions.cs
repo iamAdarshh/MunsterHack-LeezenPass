@@ -35,10 +35,20 @@ public static class InfrastructureServiceExtensions
     // Local disk until a MinIO implementation is needed.
     services.AddSingleton<IFileStorage, LocalFileStorage>();
 
-    // Only a fake so far: the vision provider is decided at the event.
-    services.AddSingleton<IVisionExtractor, FakeVisionExtractor>();
-
     var useFakes = config.GetSection(FeaturesOptions.Section).Get<FeaturesOptions>()?.UseFakes ?? false;
+
+    // Vision can be real even with UseFakes: a local model (LM Studio) works offline too.
+    var vision = config.GetSection(VisionOptions.Section).Get<VisionOptions>() ?? new VisionOptions();
+    var realVision = vision.Provider == VisionProvider.OpenAiCompatible || (vision.Provider == VisionProvider.Auto && !useFakes);
+    if (realVision)
+    {
+      services.AddHttpClient<IVisionExtractor, OpenAiCompatibleVisionExtractor>();
+      services.AddHostedService<VisionWarmupService>();
+    }
+    else
+    {
+      services.AddSingleton<IVisionExtractor, FakeVisionExtractor>();
+    }
     if (useFakes)
     {
       services.AddSingleton<IEmailSender, FakeEmailSender>();
@@ -50,7 +60,8 @@ public static class InfrastructureServiceExtensions
       services.AddHttpClient<ICaptchaVerifier, TurnstileCaptchaVerifier>(c => c.Timeout = TimeSpan.FromSeconds(5));
     }
 
-    logger.LogInformation("Infrastructure registered (UseFakes={UseFakes})", useFakes);
+    logger.LogInformation("Infrastructure registered (UseFakes={UseFakes}, Vision={Vision})",
+      useFakes, realVision ? $"{vision.Model} @ {vision.BaseUrl}" : "fake");
 
     return services;
   }

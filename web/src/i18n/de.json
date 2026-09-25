@@ -81,7 +81,7 @@
   },
   "registerBike": {
     "title": "Rad registrieren",
-    "body": "Die Rahmennummer findest du meist unter dem Tretlager. Fotos fügst du im nächsten Schritt hinzu.",
+    "body": "Die Rahmennummer findest du meist unter dem Tretlager.",
     "submit": "Rad registrieren"
   },
   "editBike": {
@@ -117,7 +117,9 @@
     "registered": "Rad registriert. Füge jetzt Fotos hinzu – vor allem die Seitenansicht und die Rahmennummer.",
     "feinCode": "FEIN-Code",
     "reportStolen": "Als gestohlen melden",
-    "downloadPass": "Fahrradpass (PDF)"
+    "downloadPass": "Fahrradpass (PDF)",
+    "registeredWithPhotos": "Rad registriert, Fotos gespeichert.",
+    "photoUploadFailed": "Ein Foto konnte nicht gespeichert werden – bitte unten erneut hinzufügen."
   },
   "photos": {
     "title": "Fotos",
@@ -202,7 +204,8 @@
     "locationRequired": "Bitte setze einen Punkt auf der Karte.",
     "dateTooOld": "Das Datum liegt zu weit zurück.",
     "alreadyStolen": "Dieses Rad ist bereits als gestohlen gemeldet.",
-    "notStolen": "Dieses Rad ist nicht als gestohlen gemeldet."
+    "notStolen": "Dieses Rad ist nicht als gestohlen gemeldet.",
+    "aiUnavailable": "Automatische Erkennung gerade nicht möglich."
   },
   "reportTheft": {
     "title": "Diebstahl melden",
@@ -288,5 +291,31 @@
     "hiltrup": "Hiltrup",
     "amelsbueren": "Amelsbüren",
     "outside": "außerhalb Münsters"
+  },
+  "aiPrefill": {
+    "title": "Schneller mit Fotos (optional)",
+    "body": "Die KI schlägt Typ, Farben, Marke und Rahmennummer vor. Du prüfst alles, bevor gespeichert wird. Fotos werden erst beim Speichern hochgeladen.",
+    "slot": {
+      "side": "Seitenansicht",
+      "frame_no": "Rahmennummer"
+    },
+    "hint": {
+      "side": "Ganzes Rad von der Seite – für Typ, Farben, Marke.",
+      "frame_no": "Nahaufnahme der eingeschlagenen Nummer, meist unter dem Tretlager."
+    },
+    "analysing": "Wird erkannt …",
+    "failed": "Automatische Erkennung gerade nicht möglich – bitte selbst ausfüllen.",
+    "frameFound": "Erkannt:",
+    "frameNotFound": "Keine Nummer lesbar – bitte näher ran oder selbst eintippen.",
+    "applied": "Vorschläge eingetragen",
+    "notApplied": "Unsicher – Typ und Farben bitte selbst prüfen",
+    "confidence": "Sicherheit: {{level}}",
+    "level": {
+      "high": "hoch",
+      "medium": "mittel",
+      "low": "niedrig"
+    },
+    "review": "Vorschläge aus den Fotos sind eingetragen. Bitte prüfe sie, bevor du speicherst.",
+    "reviewFrame": "Vergleiche die Rahmennummer Zeichen für Zeichen mit dem Rahmen."
   }
 }

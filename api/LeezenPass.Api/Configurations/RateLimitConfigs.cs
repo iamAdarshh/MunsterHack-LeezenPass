@@ -10,6 +10,9 @@ public static class RateLimitPolicies
 
   /// <summary>Register/update bike: 30 per hour per user. The 409 on a taken frame number must not become a free lookup.</summary>
   public const string BikeWrite = "bike-write";
+
+  /// <summary>AI photo analysis: 30 per hour per user (each call keeps the model busy for seconds).</summary>
+  public const string Ai = "ai";
 }
 
 /// <summary>Limits are in memory: restarting the API resets them (handy after demo rehearsals).</summary>
@@ -22,6 +25,7 @@ public static class RateLimitConfigs
       o.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
       o.AddPolicy(RateLimitPolicies.Upload, ctx => PerUser(ctx, 30, TimeSpan.FromHours(1)));
       o.AddPolicy(RateLimitPolicies.BikeWrite, ctx => PerUser(ctx, 30, TimeSpan.FromHours(1)));
+      o.AddPolicy(RateLimitPolicies.Ai, ctx => PerUser(ctx, 30, TimeSpan.FromHours(1)));
     });
 
     return services;

@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { type ReactNode, useState } from 'react'
+import { type ReactNode, useEffect, useState } from 'react'
 import { Controller, useForm, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
@@ -9,6 +9,7 @@ import { Button } from '../../components/Button'
 import { FormField, inputClass } from '../../components/FormField'
 import { Alert } from '../../components/States'
 import { useErrorText } from '../../i18n/useErrorText'
+import type { Prefill } from './prefill'
 import { Swatch } from './Swatch'
 
 /** Same rule as FrameNumber.Normalize on the server. */
@@ -80,11 +81,13 @@ function toInput(values: ValidValues): BikeInput {
 interface Props {
   /** Existing bike when editing. */
   bike?: Bike
+  /** AI suggestions. Only fill fields the user hasn't touched, never overwrite their input. */
+  prefill?: Prefill
   submitLabel: string
   onSubmit: (input: BikeInput) => Promise<unknown>
 }
 
-export function BikeForm({ bike, submitLabel, onSubmit }: Props) {
+export function BikeForm({ bike, prefill, submitLabel, onSubmit }: Props) {
   const { t } = useTranslation()
   const errorText = useErrorText()
   const [formError, setFormError] = useState<string | null>(null)
@@ -93,6 +96,19 @@ export function BikeForm({ bike, submitLabel, onSubmit }: Props) {
     defaultValues: toDefaults(bike),
   })
   const { errors, isSubmitting } = form.formState
+  useEffect(() => {
+    if (!prefill) return
+    const untouched = (name: keyof Prefill) => !form.getFieldState(name).isDirty
+    const options = { shouldValidate: form.formState.isSubmitted }
+    const { frameNumber, brand, type, colorPrimary, colorSecondary, features } = prefill
+    if (frameNumber !== undefined && untouched('frameNumber')) form.setValue('frameNumber', frameNumber, options)
+    if (brand !== undefined && untouched('brand')) form.setValue('brand', brand, options)
+    if (type !== undefined && untouched('type')) form.setValue('type', type, options)
+    if (colorPrimary !== undefined && untouched('colorPrimary')) form.setValue('colorPrimary', colorPrimary, options)
+    if (colorSecondary !== undefined && untouched('colorSecondary')) form.setValue('colorSecondary', colorSecondary, options)
+    if (features !== undefined && untouched('features')) form.setValue('features', features, options)
+  }, [prefill, form])
+
   const isEbike = useWatch({ control: form.control, name: 'isEbike' })
   const removeFeinCode = useWatch({ control: form.control, name: 'removeFeinCode' })
 

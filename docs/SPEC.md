@@ -78,7 +78,7 @@ Indexes: unique `frame_no_norm`; index `frame_no_loose`, `fein_code_hash`; uniqu
 | POST | `/api/bikes/{id}/photos` | Upload photo (multipart `file` + `kind`, header `X-LeezenPass: 1`; oriented, EXIF stripped, max 1600 px + 400 px thumb; rate policy `upload`) | Owner |
 | GET | `/api/bikes/{id}/photos/{photoId}?size=thumb` | Photo JPEG (full or thumbnail) | Owner |
 | DELETE | `/api/bikes/{id}/photos/{photoId}` | Delete photo | Owner |
-| POST | `/api/ai/extract` | Photo → suggested attributes | User |
+| POST | `/api/ai/extract` | Photo → suggested attributes (multipart `file`, header `X-LeezenPass: 1`, rate policy `ai`). Image is re-encoded (no EXIF, max 1024 px) and never stored. 503 `errors.aiUnavailable` on timeout/unreachable model → manual entry | User |
 | GET | `/api/bikes/{id}/pass.pdf` | Bike pass PDF (side photo, QR code to `/b/{token}`) | Owner |
 | POST | `/api/bikes/{id}/theft` | Report stolen (409 if already stolen) | Owner |
 | PUT | `/api/bikes/{id}/theft` | Update location note / police case number of the open report | Owner |
@@ -138,7 +138,7 @@ Candidates: stolen bikes within 10 km, reported in last 90 days. Score > 0.6 →
 
 ### AI extraction
 
-Strict JSON schema: `{type, color_primary, color_secondary, brand_guess, features[], frame_number_candidate, confidence}`. Provider decided at the event (use available AI credits). `FakeVisionExtractor` returns canned data.
+Strict JSON schema: `{type, color_primary, color_secondary, brand_guess, features[], frame_number_candidate, confidence}`; enum values are exactly the catalog keys (`color_secondary` may be `none`). Provider: any OpenAI-compatible chat API with image input via `response_format: json_schema` (strict). Chosen: **Qwen3-VL-8B in LM Studio, running locally** (works offline, photos never leave the laptop, ~4–10 s per photo on an M3). Timeout 15 s, then manual entry. Requests are sent one at a time (a local model can't handle two images within the timeout). Type/colours/features are only prefilled at confidence ≥ 0.4; brand and frame number are always offered for the user to check. `FakeVisionExtractor` returns canned data.
 
 ### Images
 

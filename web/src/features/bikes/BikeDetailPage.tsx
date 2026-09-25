@@ -35,7 +35,8 @@ function BikeDetail({ bike }: { bike: Bike }) {
   const { t } = useTranslation()
   const format = useFormat()
   const location = useLocation()
-  const justRegistered = (location.state as { justRegistered?: boolean } | null)?.justRegistered === true
+  const state = location.state as { justRegistered?: boolean; photoUploadFailed?: boolean } | null
+  const justRegistered = state?.justRegistered === true
 
   return (
     <>
@@ -49,7 +50,8 @@ function BikeDetail({ bike }: { bike: Bike }) {
 
       {justRegistered && (
         <p role="status" className="mt-4 rounded-lg bg-emerald-50 p-3 text-sm text-emerald-900">
-          {t('bikeDetail.registered')}
+          {bike.photos.length > 0 ? t('bikeDetail.registeredWithPhotos') : t('bikeDetail.registered')}
+          {state?.photoUploadFailed && ` ${t('bikeDetail.photoUploadFailed')}`}
         </p>
       )}
 
