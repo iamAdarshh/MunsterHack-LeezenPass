@@ -22,12 +22,13 @@ Use this when reviewing a diff or PR. This is a 36-hour hackathon project: optim
 - Secrets, API keys or connection strings committed; `.env` tracked.
 - SQL built by string concatenation; raw SQL with user input not parameterised.
 - Exception details or stack traces returned to clients.
-- Trust level raised without both receipt AND possession checks passing (or without partner role / eligible transfer).
-- Possession challenge code reusable, not expiring after 10 min, not bound to bike + user, or stored in plain text.
+- `/api/check` distinguishes a registered clean bike from an unknown one (different status, fields, timing), or `possible_match` searches beyond stolen/open-transfer bikes.
+- Duplicate-registration responses differ between "stolen" and "registered" (message, status, type, timing).
+- Trust level raised without both receipt AND possession checks (or without partner role / eligible transfer).
+- Possession challenge reusable, not expiring after 10 min, not bound to bike + user, or stored in plain text.
 - Receipt/possession photos reachable by anyone other than the owner.
-- Registration with an existing frame number overwrites the bike, reveals the owner, or reveals that the bike is stolen.
-- Goodwill points credited on submission instead of verified outcome; credit not idempotent (double credit on retry); points written outside the outcome's transaction.
-- Leaderboard shows users who did not opt in, or shows email / real name.
+- Goodwill points credited on submission instead of verified outcome; non-idempotent credit; credit outside the outcome's transaction.
+- Leaderboard shows non-opted-in users, emails or real names.
 - Partner or admin endpoint without role check.
 
 ### Correctness
@@ -41,6 +42,8 @@ Use this when reviewing a diff or PR. This is a 36-hour hackathon project: optim
 - New hard dependency on a network service without a Fake/offline fallback.
 - Preview/RC/beta package added.
 - Change touches many slices at once late in the event (after Sat 09:00).
+- Seed data missing or broken (empty stolen list, no demo users, no bike per trust level).
+- New feature work started after Sat 09:00.
 
 ## Should fix
 
@@ -51,8 +54,8 @@ Use this when reviewing a diff or PR. This is a 36-hour hackathon project: optim
 - `any` in TypeScript; server state held in `useState` instead of TanStack Query.
 - Endpoint added/changed but `docs/SPEC.md` API table not updated.
 - N+1 queries on list endpoints (stolen list, matches).
-- Point values, caps or badge thresholds hard-coded outside `GoodwillPolicy`.
-- `TrustLevel` assigned directly in an endpoint instead of via domain methods.
+- Point values, caps or badge thresholds outside `GoodwillPolicy`.
+- `TrustLevel` assigned directly instead of via domain methods.
 - AI verification failure shown as a hard error instead of a retry prompt.
 
 ## Don't flag

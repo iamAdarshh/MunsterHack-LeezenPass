@@ -15,9 +15,9 @@ api/LeezenPass.Api/
     Transfers/Create/ Transfers/Claim/ Transfers/Certificate/ Verify/
     Ai/Extract/
     Verification/Challenge/ Verification/Possession/ Verification/Receipt/ Verification/Status/
-    Disputes/Open/ Disputes/Mine/ Disputes/Resolve/
+    Disputes/Open/ Disputes/Mine/ Disputes/Resolve/ (resolve: cut if late)
     Partner/RegisterBike/
-    Goodwill/Mine/ Goodwill/Leaderboard/ Profile/Update/
+    Goodwill/Mine/ Goodwill/Leaderboard/ (cut if late) Profile/Update/
     Sightings/ RiskMap/ Tags/        (stretch)
   Infrastructure/
     Data/            AppDbContext, entity configurations, migrations
@@ -74,10 +74,11 @@ Adapt folder names to what the Ardalis Minimal Clean template generates; keep th
 - `Features:UseFakes=true` switches every external dependency to its Fake.
 - Secrets from environment / user-secrets. Document every key in `infra/.env.example`.
 
-## Trust + goodwill specifics
+## Check, trust + goodwill specifics
 
-- `IVisionExtractor` gains `ExtractReceiptAsync` and `CheckPossessionAsync`; update the Fake (pass if file name contains `pass`).
-- Challenge code: 4 digits from `RandomNumberGenerator`, stored as SHA-256(code + bikeId), 10 min, single use. Rate-limit policy `challenge`: 5 per hour per user.
-- Duplicate frame on register: return `ProblemDetails` 409 with type `frame-already-registered` or `frame-not-registrable`; same response time for both paths.
-- Goodwill ledger: unique index `(user_id, action, ref_type, ref_id)`; `GoodwillService.CreditAsync` catches `DbUpdateException` for the unique violation and returns false.
+- Check: implement the lookup order from SPEC "Check lookup order". One response DTO; same fields present for `unknown` regardless of whether a registered bike exists.
+- `IVisionExtractor` gains `ExtractReceiptAsync` and `CheckPossessionAsync`; Fake passes if file name contains `pass`.
+- Challenge code: 4 digits from `RandomNumberGenerator`, stored as SHA-256(code + bikeId + userId), 10 min, single use. Rate-limit policy `challenge`: 5 per hour per user.
+- Duplicate frame on register: one `ProblemDetails` 409 (type `frame-already-registered`) for every case; do the same DB work in both branches. Rate-limit policy `register-conflict`: 5 per day per user.
+- Goodwill ledger: unique index `(user_id, action, ref_type, ref_id)`; `GoodwillService.CreditAsync` catches the unique violation and returns false.
 - Seed roles `Partner`, `Admin` and users `partner@demo.local`, `admin@demo.local`.

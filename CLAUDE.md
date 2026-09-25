@@ -11,11 +11,14 @@ Read the relevant SPEC section before implementing a feature. Backend and fronte
 - Build in this order and don't skip ahead:
   1. Registry (bike CRUD, photos) + public check endpoint
   2. Theft report + public stolen list + pass PDF
-  3. AI photo prefill
-  4. Ownership transfer + certificate PDF
-  5. Ownership trust levels (receipt + possession checks, duplicate/dispute handling, partner registration)
-  6. Goodwill points (ledger, profile badge, opt-in leaderboard, referral)
-  7. ONE stretch feature (QR relay, sightings matching, or risk map), only when 1–6 are demoable
+  3. **Seed data** (demo users incl. partner, ~200 bikes, ~60 theft reports, demo photos) — the stolen list must never be empty at a demo
+  4. AI photo prefill
+  5. Ownership transfer + certificate PDF
+  6. Trust levels — core scope from SPEC feature 5 (time box 2.5 h)
+  7. Goodwill points — core scope from SPEC feature 6 (time box 1 h)
+  8. Optional: ONE stretch feature from SPEC 7–12
+- Hard stop for new features: **Sat 09:00**. 09:00–12:00 is integration, `/demo-check`, fixes only.
+- If a time box runs out, ship what works and move the rest to "Next steps" in the pitch. Cut order: admin dispute resolution → leaderboard → referral → partner UI (keep endpoint) → stretch feature.
 - `main` must always build and run. Small commits, one slice at a time.
 - Only stable/GA releases. No preview, RC or beta NuGet/npm packages.
 - Every external dependency (LLM, email, captcha, storage) needs a fake so the demo still works offline (event Wi-Fi is unreliable).
@@ -65,9 +68,9 @@ All from the repo root. Verified 2026-09-25.
 - Sighting scoring is a list of `IScoreComponent`s (open/closed: add a component, don't edit others).
 - No generic repository. Use `AppDbContext` directly in slices.
 - No MediatR / extra layers unless the template already requires them.
-- Trust rules live in the domain: `Bike.MarkEvidenceChecked()`, `Bike.MarkPartnerVerified()`, `Bike.ResetTrust()`. Endpoints never set `TrustLevel` directly.
-- `GoodwillPolicy` (domain) is the only place with point values, caps and badge thresholds. `GoodwillService` (concrete class, no interface) writes the ledger inside the same transaction as the outcome.
-- Roles: `Partner`, `Admin` (ASP.NET Core Identity roles). Partner/admin endpoints require the role.
+- Trust rules live in the domain: `Bike.MarkEvidenceChecked()`, `Bike.MarkPartnerVerified()`, `Bike.InheritTrust(from)`. Endpoints never set `TrustLevel` directly.
+- `GoodwillPolicy` (domain) is the only place with point values, caps and badge thresholds. `GoodwillService` (concrete class, no interface) writes the ledger inside the outcome's transaction.
+- Roles: `Partner`, `Admin` (Identity roles). Partner/admin endpoints require the role.
 
 ## Privacy rules (non-negotiable)
 
@@ -78,8 +81,9 @@ All from the repo root. Verified 2026-09-25.
 - Risk map: only hex cells with ≥ 3 reports.
 - Log hashed IPs only. No personal data in logs.
 - Seed data is synthetic and labelled "Demo-Daten" in the UI.
-- Receipt photos and possession photos are owner-only. Never returned by public endpoints.
-- Duplicate or stolen frame-number registrations reveal nothing about the existing bike or owner.
+- `/api/check` never reveals that a clean bike is registered. Trust labels appear in check results only for `stolen` and `verified_transfer`.
+- Duplicate frame-number registration: one identical response whether the existing bike is stolen or not.
+- Receipt and possession photos are owner-only.
 - Leaderboard: opt-in users only, alias only.
 
 ## Code style

@@ -26,62 +26,65 @@
    - PDF export of the pass (for police and insurance).
 2. **Check before you buy** (public, no login)
    - Input: frame number or FEIN code.
-   - Result: `stolen` (red, show photo + attributes), `verified_transfer` (green, seller has an open transfer), `unknown` (grey, warning-signs checklist). Loose-key hits return `possible_match` with photos to compare.
+   - Results:
+     - `stolen` (red): photo + attributes + trust label of the reporting owner.
+     - `verified_transfer` (green): seller has an open transfer; shows trust label (the seller consented to disclosure by creating the transfer).
+     - `possible_match` (amber): loose-key hit **among stolen bikes or bikes with an open transfer only**; photos to compare.
+     - `unknown` (grey): everything else, **including registered bikes without an open transfer**. Warning-signs checklist.
+   - The check never reveals that a clean bike is registered.
    - Rate-limited, captcha, hashed lookup logging.
 3. **Theft report**
    - Time, approximate location (map pin), location note, lock type, optional police case number.
-   - Generates police-ready summary + link to Polizei NRW Internetwache + insurance reminder.
-   - Bike appears in public stolen list (photos, attributes, district only).
-   - Share card for messengers/social.
+   - Police-ready summary + link to Polizei NRW Internetwache + insurance reminder.
+   - Bike appears in public stolen list (photos, attributes, district, trust label; no owner data).
+   - Share card for messengers/social, ending with "Registriere dein Rad in 60 Sekunden".
    - Owner can mark as recovered.
 4. **Ownership transfer**
    - Seller creates 8-char code (unambiguous alphabet), valid 48 h, single use, stored hashed.
    - Buyer claims → owner changes, history kept, certificate PDF with QR to verification page.
-   - The seller's personal data stays behind: receipt photos are deleted and the FEIN hash (encodes the seller's address) is cleared on transfer. Reporting a theft cancels open codes.
-   - Seller shares a "LeezenPass verifiziert" text for marketplace listings, linking to `/b/{token}` (registered, handover prepared, frame number hint).
+   - Transfer keeps the sender's trust level (chain of custody).
 5. **Ownership trust levels**
-   - Every bike has a trust level, shown on the bike page, in `/api/check` results for registered bikes and on the stolen list.
-     | Level | Earned by | Label (de) |
-     | --- | --- | --- |
-     | `SelfDeclared` | Registration with verified email | "Selbst angegeben" |
-     | `EvidenceChecked` | Receipt check passed **and** possession check passed | "Per Beleg geprüft" |
-     | `ThirdPartyVerified` | Registered by a partner (bike shop, ADFC coding event) or received via transfer from an owner at ≥ `EvidenceChecked` | "Von Partner bestätigt" |
+   | Level | Earned by | Label (de) |
+   | --- | --- | --- |
+   | `SelfDeclared` | Registration with verified email | "Selbst angegeben" |
+   | `EvidenceChecked` | Receipt check passed **and** possession check passed | "Per Beleg geprüft" |
+   | `ThirdPartyVerified` | Registered by a partner, or transferred from an owner at ≥ `EvidenceChecked` | "Von Partner bestätigt" |
+   - Shown to the owner (bike list/detail), on the stolen list, and in check results only for `stolen` / `verified_transfer` (see 2).
    - **Receipt check**: owner uploads receipt photo → `IVisionExtractor.ExtractReceipt` → pass if frame number loose-matches, or brand matches AND model fuzzy-matches AND purchase date ≤ today.
-   - **Possession check**: owner requests a challenge → app shows a random 4-digit code valid 10 min, single use → owner photographs the frame number with the code visible next to it → `IVisionExtractor.CheckPossession` → pass if code equals the challenge and frame number loose-matches.
-   - Both passed → `EvidenceChecked`. Trust never goes down automatically; a lost dispute resets to `SelfDeclared`.
-   - **Transfers** keep the sender's level (chain of custody). Partner-registered bikes start at `ThirdPartyVerified` and are handed to the customer via the normal transfer flow.
-   - **Duplicate frame number on registration** (exact `frame_no_norm` match):
-     - existing bike is `stolen` → 409 with a neutral message ("Dieses Rad kann nicht registriert werden. Bitte wende dich an die Polizei."), log a security event, email the owner. Reveal nothing about the owner or the bike.
-     - otherwise → 409 "bereits registriert" + option to open a **dispute** (claimant uploads evidence; owner is notified; resolution is manual by an admin during the hackathon).
-     - loose-key match only → allow, but show a warning to the registrant.
+   - **Possession check**: owner requests a challenge → random 4-digit code, valid 10 min, single use → owner photographs frame number with the code visible → `IVisionExtractor.CheckPossession` → pass if code equals the challenge and frame number loose-matches.
+   - Both passed → `EvidenceChecked`. Trust never goes down automatically.
+   - **Frame number already registered** (exact `frame_no_norm` match), whether the existing bike is stolen or not → **one identical 409 response** ("Diese Rahmennummer ist bereits vergeben. Du kannst eine Klärung beantragen."), same shape and timing. Behind the scenes: security event; if the existing bike is stolen, email its owner. Nothing about the existing bike or owner is revealed.
+   - Residual risk: a logged-in user learns that a frame number exists. Mitigation: verified email required, max 5 conflicts per user per day, logged.
+   - **Dispute (core)**: "Klärung beantragen" stores claimant + evidence photos with status `open`, notifies the existing owner by email. Resolution is manual (admin endpoint only if time allows).
+   - **Partner registration (core)**: one seeded account with role `Partner` can register a single bike for a customer → bike starts `ThirdPartyVerified` under the partner → transfer code handed to the customer (normal transfer flow).
 6. **Goodwill points**
-   - Points are credited for **verified outcomes**, never for raw submissions. Ledger is append-only and idempotent.
-     | Action | Points | Credited when |
-     | --- | --- | --- |
-     | `register_bike` | 10 | On registration (max 3 bikes per user earn points) |
-     | `evidence_verified` | 20 | Bike reaches `EvidenceChecked` |
-     | `referral_verified` | 15 | A user who signed up with your referral code gets their first bike to `EvidenceChecked` |
-     | `sighting_confirmed` | 50 | Owner marks your sighting "mine" |
-     | `recovery_contributed` | 100 | Bike marked recovered and your sighting/relay message was confirmed for it |
-     | `partner_registration` | 10 | Bike registered for you by a partner (shop / ADFC) |
-   - Never award points for: reporting your own bike stolen, unconfirmed sightings, check lookups.
-   - Revoke: `register_bike` points if the bike is deleted within 24 h; all points for a bike if a dispute about it is lost.
-   - Badges by total: 10 "Leezen-Starter:in", 50 "Leezen-Schützer:in", 200 "Leezen-Held:in".
-   - Profile shows total, badge and history. Leaderboard (top 10, current month) shows **only users who opted in**, by alias.
-   - Referral: every user has a `referral_code`; register accepts `?ref=CODE`.
+   - Points only for **verified outcomes**, never raw submissions. Append-only, idempotent ledger.
+     | Action | Points | Credited when | Scope |
+     | --- | --- | --- | --- |
+     | `register_bike` | 10 | On registration (max 3 bikes per user earn points) | Core |
+     | `evidence_verified` | 20 | Bike reaches `EvidenceChecked` | Core |
+     | `partner_registration` | 10 | Customer claims a partner-registered bike | Core |
+     | `referral_verified` | 15 | Referred user's first bike reaches `EvidenceChecked` | Cut if late |
+     | `sighting_confirmed` | 50 | Owner marks your sighting "mine" | Only if Stretch 8 is built |
+     | `recovery_contributed` | 100 | Bike recovered via your confirmed sighting/relay | Only if Stretch 7/8 is built |
+   - Never: points for reporting your own bike stolen, unconfirmed sightings, check lookups.
+   - Revoke `register_bike` if the bike is deleted within 24 h.
+   - Badges: 10 "Leezen-Starter:in", 50 "Leezen-Schützer:in", 200 "Leezen-Held:in".
+   - Profile (core): total, badge, history.
+   - Leaderboard (cut if late): top 10 this month, **opt-in users only, alias only**.
 
-### Stretch (pick one)
+### Stretch (only when 1–6 are demoable; pick one)
 
-5. **QR tag + anonymous finder contact**: `/b/{token}` public page; relay message to owner by email; stolen bikes show "inform the police".
-6. **Sightings + matching**: anyone reports photo + GPS + time; background scoring against nearby stolen bikes; only owner sees candidates.
-7. **Risk map**: hexagons (~250 m) with ≥ 3 reports + OSM bike parking layer.
-8. **Partner view (mock)**: ADFC coding events / bike shops.
-9. **Partner accounts (real)**: bike shops / ADFC with role `Partner`; bulk registration at events. (Hackathon MVP: one seeded partner account + single-bike partner registration.)
-10. **District adoption progress** ("Kreuzviertel: 23 % registriert") – needs optional home district on profile.
+7. **QR tag + anonymous finder contact**: `/b/{token}` page; relay message to owner by email; stolen bikes show "inform the police".
+8. **Sightings + matching**: photo + GPS + time; background scoring against nearby stolen bikes; only the owner sees candidates.
+9. **Risk map**: ~250 m hexagons with ≥ 3 reports + OSM bike parking layer.
+10. **Partner programme**: self-service partner onboarding, bulk registration at ADFC coding events, bike-shop check-in view, partner dashboard.
+11. **District adoption progress** ("Kreuzviertel: 23 % registriert"); needs optional home district on profile.
+12. **Found-bike matching**: CSV import of Fundfahrradstation frame numbers (mock) matched against stolen bikes; owner notification.
 
 ### Out of scope
 
-Police system integration, scraping marketplaces, payments, native apps, push notifications.
+Police system integration, scraping marketplaces or Fundbüro portals, payments, native apps, push notifications.
 
 ## Data model
 
@@ -100,8 +103,8 @@ Police system integration, scraping marketplaces, payments, native apps, push no
 | bikes (new columns) | trust_level (SelfDeclared/EvidenceChecked/ThirdPartyVerified), trust_source (receipt_possession/partner/transfer), trust_verified_at |
 | possession_challenges | id, bike_id, user_id, code_hash, expires_at, used_at |
 | ownership_evidence | id, bike_id, kind (receipt/possession), photo_id, ai_result jsonb, status (passed/failed), created_at |
-| ownership_disputes | id, bike_id, claimant_id, status (open/upheld/rejected), evidence_photo_ids, created_at, resolved_at |
-| security_events | id, kind (stolen_frame_registration_attempt, …), user_id, bike_id, ip_hash, created_at |
+| ownership_disputes | id, frame_no_norm, existing_bike_id, claimant_id, status (open/upheld/rejected), evidence_photo_ids, created_at, resolved_at |
+| security_events | id, kind (duplicate_frame_registration, stolen_frame_registration_attempt, …), user_id, bike_id, ip_hash, created_at |
 | goodwill_events | id, user_id, action, points, status (credited/revoked), ref_type, ref_id, created_at, revoked_at — unique (user_id, action, ref_type, ref_id) |
 | users (new columns) | alias, show_on_leaderboard (bool, default false), referral_code (unique), referred_by_user_id |
 
@@ -127,7 +130,7 @@ Indexes: unique `frame_no_norm`; index `frame_no_loose`, `fein_code_hash`; uniqu
 | GET | `/api/stolen?type=&color=&district=` | Public stolen list: no owner data, no frame number, district + date only, side/detail photos only. Filter by district, not bbox (a bbox over exact points could be narrowed to the exact spot) | Public |
 | GET | `/api/stolen/{token}` | One stolen bike (share card, QR tag page); 404 if not stolen | Public |
 | GET | `/api/stolen/{token}/photos/{photoId}?size=thumb` | Photo of a stolen bike (side/detail only, only while stolen) | Public |
-| POST | `/api/check` | `{frameNumber \| feinCode, captchaToken}` → `{result: stolen \| verified_transfer \| possible_match \| unknown, bikes}`. Exact match first (a registered clean bike is `unknown`: registration isn't revealed), then the loose key against **stolen bikes only**. `bikes` (public stolen view) only for stolen / possible_match. Every call logged as keyed hashes (IP with daily salt, query) | Public, rate policy `check` per IP (`RateLimits:CheckPerTenMinutes`), captcha |
+| POST | `/api/check` | `{frameNumber \| feinCode, captchaToken}` → `{result: stolen \| verified_transfer \| possible_match \| unknown, bikes}`. Exact match first (a registered clean bike is `unknown`: registration isn't revealed), then the loose key against **stolen bikes and bikes with an open transfer only** (see "Check lookup order"). `bikes` (public stolen view) only for stolen / possible_match. Every call logged as keyed hashes (IP with daily salt, query) | Public, rate policy `check` per IP (`RateLimits:CheckPerTenMinutes`), captcha |
 | GET / POST / DELETE | `/api/bikes/{id}/transfers` | Transfer state (open code, certificate id, previous owners) / create code (plain code only in this response, replaces an open one, 409 if stolen) / cancel open code | Owner |
 | POST | `/api/transfers/claim` | Claim code: owner changes, history kept. Unknown/expired/used codes all get the same 400; rate policy `claim` (10 per 10 min per user) | User |
 | GET | `/api/transfers/{id}/certificate.pdf` | Certificate PDF | New owner |
@@ -143,13 +146,13 @@ Indexes: unique `frame_no_norm`; index `frame_no_loose`, `fein_code_hash`; uniqu
 | POST | `/api/bikes/{id}/verification/possession` | Photo with code + frame no. | Owner |
 | POST | `/api/bikes/{id}/verification/receipt` | Receipt photo | Owner |
 | GET | `/api/bikes/{id}/verification` | Trust level + check status | Owner |
-| POST | `/api/disputes` | Open dispute for a frame number (evidence photos) | User |
+| POST | `/api/disputes` | Request clarification for a frame number (evidence photos) | User, rate-limited |
 | GET | `/api/me/disputes` | My disputes | User |
-| POST | `/api/admin/disputes/{id}/resolve` | Uphold / reject | Admin |
-| POST | `/api/partner/bikes` | Partner registers bike → returns transfer code for the customer | Partner |
+| POST | `/api/admin/disputes/{id}/resolve` | Uphold / reject (cut if late) | Admin |
+| POST | `/api/partner/bikes` | Partner registers bike → transfer code for the customer | Partner |
 | GET | `/api/me/goodwill` | Total, badge, history | User |
 | PUT | `/api/me/profile` | Alias, show_on_leaderboard | User |
-| GET | `/api/goodwill/leaderboard?month=` | Top 10 opted-in users (alias, points, badge) | Public |
+| GET | `/api/goodwill/leaderboard?month=` | Top 10 opted-in users (cut if late) | Public |
 
 ## Algorithms and details
 
@@ -192,18 +195,23 @@ Candidates: stolen bikes within 10 km, reported in last 90 days. Score > 0.6 →
 
 Strict JSON schema: `{type, color_primary, color_secondary, brand_guess, features[], frame_number_candidate, confidence}`; enum values are exactly the catalog keys (`color_secondary` may be `none`). Provider: any OpenAI-compatible chat API with image input via `response_format: json_schema` (strict). Chosen: **Qwen3-VL-8B in LM Studio, running locally** (works offline, photos never leave the laptop, ~10–20 s for a new 1024 px photo on an M3, mostly image encoding). Timeout 30 s, then manual entry. Requests are sent one at a time (a local model can't handle two images within the timeout). Type/colours/features are only prefilled at confidence ≥ 0.4; brand and frame number are always offered for the user to check. `FakeVisionExtractor` returns canned data.
 
+### Check lookup order
+
+1. Exact `frame_no_norm` / FEIN hash → if stolen → `stolen`; if open transfer → `verified_transfer`; else → `unknown`.
+2. No exact hit → loose key, restricted to stolen bikes and bikes with an open transfer → `possible_match`.
+3. Otherwise → `unknown`. Response shape and timing identical for "registered" and "not registered".
+
 ### Receipt + possession AI calls
 
 - `ExtractReceipt(photo)` → `{frame_number_candidate, brand, model, purchase_date, shop_name, confidence}`
 - `CheckPossession(photo, expectedCode)` → `{code_visible, code_value, frame_number_candidate, confidence}`
-- Pass thresholds: confidence ≥ 0.6. Below → "Bitte neues Foto aufnehmen" (retry), not a hard fail.
-- Fakes: pass when the uploaded file name contains `pass`, fail otherwise (for the demo script).
+- Confidence ≥ 0.6 to pass. Below → "Bitte neues Foto aufnehmen" (retry), not a hard fail.
+- Fakes: pass when the uploaded file name contains `pass`, fail otherwise.
 
 ### Goodwill
 
-- `GoodwillPolicy` (domain) is the single source of actions, points, caps and badge thresholds.
-- `GoodwillService.Credit(userId, action, refType, refId)` inserts one row; unique index makes it idempotent (catch the conflict, don't throw).
-- Called from the slices where the outcome happens (registration, verification, sighting decision, recovery, partner registration). Same DB transaction as the outcome.
+- `GoodwillPolicy` (domain): single source of actions, points, caps, badge thresholds.
+- `GoodwillService.CreditAsync(userId, action, refType, refId)` inserts one row in the same transaction as the outcome; the unique index makes it idempotent (catch the unique violation, return false).
 
 ### Images
 
@@ -212,7 +220,7 @@ SkiaSharp (+ `SkiaSharp.NativeAssets.Linux.NoDependencies` in Docker): decode, a
 ### Seed data
 
 ~200 synthetic bikes, ~60 theft reports spread over Münster districts, labelled "Demo-Daten".
-Also: partner and admin demo users, one bike per trust level, a few goodwill events for 3 opted-in demo users so the leaderboard isn't empty, sample receipt and possession photos named `*_pass.jpg` / `*_fail.jpg`.
+Also: owner, buyer, partner and admin demo users; at least one bike per trust level; one stolen bike and one bike with an open transfer for the check demo; one O/0 look-alike frame number; a few goodwill events for 3 opted-in demo users; sample photos named `*_pass.jpg` / `*_fail.jpg`. Label everything "Demo-Daten".
 
 ## Privacy / abuse
 
@@ -223,7 +231,8 @@ Also: partner and admin demo users, one bike per trust level, a few goodwill eve
 | Vigilantism | Rough areas only, "call 110, don't confront" banner |
 | Enumeration | Rate limit, captcha, minimal responses, hashed logging |
 | Location leaks | EXIF stripped |
-| Thief registers a stolen bike first | Trust level shown publicly; disputes; stolen-frame registration blocked + owner notified |
+| Registration reveals registered/stolen status | One identical 409 for all duplicates; verified email; 5 conflicts/day cap; security events |
+| Thief registers a stolen bike first | Trust label visible; clarification requests; owner of a stolen bike notified on attempts |
 | Receipt photos contain name/address | Owner-only access, never in public responses, EXIF stripped |
 | Points farming | Points only on verified outcomes, caps, idempotent ledger, revocation |
-| Leaderboard exposure | Opt-in, alias only, no email / real name |
+| Leaderboard exposure | Opt-in, alias only |

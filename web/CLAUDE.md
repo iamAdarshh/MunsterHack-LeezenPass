@@ -15,9 +15,9 @@ web/src/
     transfers/      CreateTransferPanel, ClaimTransferPage, VerifyPage
     auth/           LoginPage, RegisterPage
     verification/   VerifyOwnershipWizard (1 receipt → 2 show code → 3 photo with code → result)
-    disputes/       OpenDisputePage, MyDisputesPage
-    partner/        PartnerRegisterPage (partner role only)
-    goodwill/       ProfilePage (points, badge, history, alias + opt-in), LeaderboardPage
+    disputes/       RequestClarificationPage, MyDisputesPage
+    partner/        PartnerRegisterPage (partner role only; cut to curl if late)
+    goodwill/       ProfilePage (points, badge, history, alias + opt-in), LeaderboardPage (cut if late)
     tags/ sightings/ riskmap/   (stretch)
   components/       Shared UI (Button, Card, StatusBadge, PhotoUpload, MapPicker, DemoBanner)
   i18n/             de.json, en.json
@@ -35,9 +35,9 @@ web/src/
 - Check result colours: red = stolen, green = verified transfer, grey = unknown, amber = possible match. Always pair colour with an icon + text.
 - Show `DemoBanner` ("Demo-Daten") when the API reports demo mode.
 - Map: MapLibre GL or react-leaflet with OSM tiles; include OSM attribution.
-- `TrustBadge` component (icon + text + colour) wherever a bike appears: my bikes, bike detail, check result, stolen list.
-- Show the possession code big (≥ 48 px) with a countdown; tell the user to photograph code and frame number together.
-- Show "+10 Punkte" style toasts only after the API confirms a credit.
+- `TrustBadge` (icon + text + colour) on my bikes, bike detail, stolen list, and check results for `stolen` / `verified_transfer` only.
+- Possession code shown large (≥ 48 px) with a countdown; tell the user to photograph code and frame number together.
+- "+10 Punkte" toasts only after the API confirms a credit.
 
 ## Dev
 
