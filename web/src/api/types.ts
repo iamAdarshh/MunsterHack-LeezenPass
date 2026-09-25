@@ -141,3 +141,38 @@ export interface VisionSuggestion {
   /** 0..1 */
   confidence: number
 }
+
+/** GET /api/bikes/{id}/transfers (owner). */
+export interface TransferStatus {
+  openTransfer: { id: string; expiresAt: string } | null
+  /** Transfer that made the current owner the owner: certificate PDF. */
+  certificateTransferId: string | null
+  previousOwners: number
+}
+
+/** POST /api/bikes/{id}/transfers. The plain code exists only in this response. */
+export interface CreatedTransfer {
+  transferId: string
+  code: string
+  expiresAt: string
+}
+
+/** GET /api/verify/{token} (public). */
+export interface VerifyResult {
+  transferredAt: string
+  type: BikeType
+  brand: string | null
+  model: string | null
+  colorPrimary: BikeColor | null
+  colorSecondary: BikeColor | null
+  frameNumberHint: string
+  stillWithThisOwner: boolean
+  currentStatus: BikeStatus
+}
+
+/** GET /api/tags/{token} (public). */
+export interface TagStatus {
+  status: 'registered' | 'stolen'
+  transferOpen: boolean
+  frameNumberHint: string
+}

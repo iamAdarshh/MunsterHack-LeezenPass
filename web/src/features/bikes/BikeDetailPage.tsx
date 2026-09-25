@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useLocation, useNavigate, useParams } from 'react-router'
+import { ApiError } from '../../api/client'
 import type { Bike } from '../../api/types'
 import { BackLink } from '../../components/BackLink'
 import { Button } from '../../components/Button'
@@ -8,6 +9,7 @@ import { buttonClass } from '../../components/buttonClass'
 import { StatusBadge } from '../../components/StatusBadge'
 import { Alert, ErrorState, LoadingState } from '../../components/States'
 import { StolenPanel } from '../theft/StolenPanel'
+import { TransferPanel } from '../transfers/TransferPanel'
 import { useBike, useDeleteBike } from './api'
 import { Swatch } from './Swatch'
 import { bikeTitle } from './format'
@@ -24,7 +26,11 @@ export function BikeDetailPage() {
       <BackLink to="/bikes" label={t('nav.myBikes')} />
       <div className="mt-2">
         {bike.isPending && <LoadingState />}
-        {bike.isError && <ErrorState onRetry={() => void bike.refetch()} />}
+        {bike.error instanceof ApiError && bike.error.status === 404 ? (
+          <p className="rounded-xl border border-slate-200 p-4 text-slate-600">{t('bikeDetail.notFound')}</p>
+        ) : (
+          bike.isError && <ErrorState onRetry={() => void bike.refetch()} />
+        )}
         {bike.data && <BikeDetail bike={bike.data} />}
       </div>
     </section>
@@ -35,7 +41,7 @@ function BikeDetail({ bike }: { bike: Bike }) {
   const { t } = useTranslation()
   const format = useFormat()
   const location = useLocation()
-  const state = location.state as { justRegistered?: boolean; photoUploadFailed?: boolean } | null
+  const state = location.state as { justRegistered?: boolean; photoUploadFailed?: boolean; claimed?: boolean } | null
   const justRegistered = state?.justRegistered === true
 
   return (
@@ -52,6 +58,12 @@ function BikeDetail({ bike }: { bike: Bike }) {
         <p role="status" className="mt-4 rounded-lg bg-emerald-50 p-3 text-sm text-emerald-900">
           {bike.photos.length > 0 ? t('bikeDetail.registeredWithPhotos') : t('bikeDetail.registered')}
           {state?.photoUploadFailed && ` ${t('bikeDetail.photoUploadFailed')}`}
+        </p>
+      )}
+
+      {state?.claimed && (
+        <p role="status" className="mt-4 rounded-lg bg-emerald-50 p-3 text-sm text-emerald-900">
+          {t('claim.success')}
         </p>
       )}
 
@@ -86,6 +98,8 @@ function BikeDetail({ bike }: { bike: Bike }) {
           {bike.purchaseDate ? format.date(bike.purchaseDate) : '–'}
         </Row>
       </dl>
+
+      <TransferPanel bike={bike} />
 
       <div className="mt-8 space-y-3">
         {bike.status !== 'stolen' && (

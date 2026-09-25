@@ -119,7 +119,8 @@
     "reportStolen": "Report as stolen",
     "downloadPass": "Bike pass (PDF)",
     "registeredWithPhotos": "Bike registered, photos saved.",
-    "photoUploadFailed": "A photo could not be saved – please add it again below."
+    "photoUploadFailed": "A photo could not be saved – please add it again below.",
+    "notFound": "This bike does not exist or no longer belongs to your account."
   },
   "photos": {
     "title": "Photos",
@@ -205,7 +206,11 @@
     "dateTooOld": "The date is too far in the past.",
     "alreadyStolen": "This bike is already reported stolen.",
     "notStolen": "This bike is not reported stolen.",
-    "aiUnavailable": "Automatic recognition not available right now."
+    "aiUnavailable": "Automatic recognition not available right now.",
+    "transferCodeInvalid": "The code is invalid, expired or already used.",
+    "transferOwnBike": "This is your own code – give it to the person buying the bike.",
+    "transferStolen": "A bike reported stolen can't be handed over.",
+    "concurrentChange": "This was just changed at the same time. Please reload the page."
   },
   "reportTheft": {
     "title": "Report theft",
@@ -263,7 +268,9 @@
     "registeredTitle": "Registered with LeezenPass",
     "registeredBody": "No theft has been reported for this bike. Buying a used bike? Check the frame number first.",
     "unknownTitle": "Unknown code",
-    "unknownBody": "This QR code does not belong to any registered bike. Be careful when buying: check the frame number."
+    "unknownBody": "This QR code does not belong to any registered bike. Be careful when buying: check the frame number.",
+    "transferOpen": "Sale prepared: safe handover with a LeezenPass code is possible.",
+    "frameHint": "Frame number ends in {{hint}} – compare it with the bike."
   },
   "district": {
     "altstadt": "Altstadt",
@@ -317,5 +324,43 @@
     },
     "review": "Suggestions from the photos have been filled in. Please check them before saving.",
     "reviewFrame": "Compare the frame number character by character with the frame."
+  },
+  "transfer": {
+    "title": "Sell / hand over",
+    "intro": "When you sell, create a one-time code. The buyer enters it in LeezenPass and is registered as the new owner right away – with a certificate.",
+    "createCode": "Create handover code",
+    "newCode": "Create new code",
+    "replaceConfirm": "Create a new code? The previous code stops working.",
+    "codeLabel": "Handover code",
+    "validUntil": "Valid until {{date}} · single use",
+    "copyCode": "Copy code",
+    "openHidden": "Handover prepared (valid until {{date}}). For security the code is only shown once – create a new one if needed.",
+    "warning": "Only hand over the code once you've been paid. Whoever enters the code becomes the owner.",
+    "snippetTitle": "Text for your listing (e.g. Kleinanzeigen)",
+    "copySnippet": "Copy listing text",
+    "cancel": "Cancel handover",
+    "certificate": "Ownership certificate (PDF)",
+    "previousOwners_one": "{{count}} previous owner",
+    "previousOwners_other": "{{count}} previous owners",
+    "snippet": "✅ LeezenPass verified\nThis bike ({{title}}, frame number ends in {{hint}}) is registered with LeezenPass and not reported stolen. Handover works with a one-time code – you'll be registered as the new owner right away.\nCheck yourself: {{url}}"
+  },
+  "claim": {
+    "link": "Take over a bought bike with a code",
+    "title": "Take over bike",
+    "body": "Enter the handover code you got from the seller.",
+    "code": "Handover code",
+    "codeHint": "8 characters, e.g. ABCD-EFGH. Upper/lower case doesn't matter.",
+    "submit": "Take over bike",
+    "success": "Bike taken over – you are now registered as the owner. Your ownership certificate is below."
+  },
+  "verify": {
+    "title": "Verify ownership certificate",
+    "validTitle": "Genuine LeezenPass ownership certificate",
+    "transferredAt": "Transferred on {{date}}",
+    "frameHint": "ends in {{hint}}",
+    "transferredAgain": "The bike has since been transferred to someone else.",
+    "stolenNow": "This bike is currently reported stolen. Seen it? Call 110.",
+    "notFoundTitle": "Certificate not found",
+    "notFoundBody": "This ownership certificate does not exist at LeezenPass. It may be forged."
   }
 }

@@ -30,9 +30,13 @@ public class BikeConfiguration : IEntityTypeConfiguration<Bike>
     builder.HasIndex(b => b.OwnerId);
 
     builder.HasOne<AppUser>().WithMany().HasForeignKey(b => b.OwnerId).OnDelete(DeleteBehavior.Cascade);
+    // xmin as concurrency token: a claim can't silently overwrite a theft report written at the same moment.
+    builder.Property<uint>("Version").IsRowVersion();
+
     builder.Ignore(b => b.OpenTheftReport);
     builder.Ignore(b => b.CanReportStolen);
     builder.Ignore(b => b.CanMarkRecovered);
+    builder.Ignore(b => b.CanTransfer);
     builder.HasMany(b => b.Photos).WithOne().HasForeignKey(p => p.BikeId).OnDelete(DeleteBehavior.Cascade);
   }
 }

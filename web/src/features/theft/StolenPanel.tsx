@@ -44,7 +44,7 @@ export function StolenPanel({ bike, theft }: { bike: Bike; theft: Theft }) {
         </a>
         <details className="text-sm">
           <summary className="min-h-11 cursor-pointer py-2 font-semibold text-brand-700">{t('stolenPanel.showSummary')}</summary>
-          <pre className="rounded-lg bg-slate-100 p-3 text-xs whitespace-pre-wrap">{policeSummary(bike, theft, origin)}</pre>
+          <pre className="rounded-lg bg-slate-100 p-3 text-xs whitespace-pre-wrap [overflow-wrap:anywhere]">{policeSummary(bike, theft, origin)}</pre>
         </details>
       </Step>
 

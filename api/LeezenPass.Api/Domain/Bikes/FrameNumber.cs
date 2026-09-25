@@ -56,6 +56,9 @@ public sealed class FrameNumber : IEquatable<FrameNumber>
     normalized.Replace('O', '0').Replace('I', '1').Replace('L', '1')
               .Replace('S', '5').Replace('B', '8').Replace('Z', '2');
 
+  /// <summary>Last 4 characters ("…815K"): enough to compare with the physical bike, useless for lookups.</summary>
+  public static string Hint(string normalized) => normalized.Length <= 4 ? normalized : "…" + normalized[^4..];
+
   public bool Equals(FrameNumber? other) => other is not null && Normalized == other.Normalized;
 
   public override bool Equals(object? obj) => Equals(obj as FrameNumber);

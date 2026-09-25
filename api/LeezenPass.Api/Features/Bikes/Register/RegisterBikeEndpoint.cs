@@ -41,7 +41,6 @@ public class RegisterBikeEndpoint(AppDbContext db, IClock clock, IOptions<FeinOp
     }
 
     db.Bikes.Add(bike);
-    db.BikeOwnershipHistory.Add(new BikeOwnershipHistory(bike.Id, userId, now));
 
     try
     {

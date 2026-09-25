@@ -20,6 +20,25 @@ public static class MiddlewareConfig
       app.UseHsts();
     }
 
+    // Two requests changed the same row (e.g. claim vs. new code): tell the client, don't 500.
+    app.Use(async (ctx, next) =>
+    {
+      try
+      {
+        await next(ctx);
+      }
+      catch (DbUpdateConcurrencyException) when (!ctx.Response.HasStarted)
+      {
+        ctx.Response.StatusCode = StatusCodes.Status409Conflict;
+        await ctx.Response.WriteAsJsonAsync(new
+        {
+          status = StatusCodes.Status409Conflict,
+          title = "Conflict",
+          errors = new[] { new { name = "generalErrors", reason = "errors.concurrentChange" } },
+        });
+      }
+    });
+
     app.UseAuthentication();
     app.UseAuthorization();
     app.UseRateLimiter();

@@ -10,6 +10,8 @@ import { ReportTheftRoute } from '../features/theft/ReportTheftRoute'
 import { StolenBikePage } from '../features/theft/StolenBikePage'
 import { StolenListPage } from '../features/theft/StolenListPage'
 import { TagPage } from '../features/theft/TagPage'
+import { ClaimTransferPage } from '../features/transfers/ClaimTransferPage'
+import { VerifyPage } from '../features/transfers/VerifyPage'
 import { Layout } from './Layout'
 import { NotFoundPage } from './NotFoundPage'
 
@@ -21,11 +23,13 @@ export const router = createBrowserRouter([
       { path: 'stolen', element: <StolenListPage /> },
       { path: 'stolen/:token', element: <StolenBikePage /> },
       { path: 'b/:token', element: <TagPage /> },
+      { path: 'verify/:token', element: <VerifyPage /> },
       { path: 'login', element: <LoginPage /> },
       {
         element: <RequireAuth />,
         children: [
           { path: 'bikes', element: <MyBikesPage /> },
+          { path: 'claim', element: <ClaimTransferPage /> },
           { path: 'bikes/new', element: <RegisterBikePage /> },
           { path: 'bikes/:id', element: <BikeDetailPage /> },
           { path: 'bikes/:id/edit', element: <EditBikePage /> },

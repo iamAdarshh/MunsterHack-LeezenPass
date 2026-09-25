@@ -39,6 +39,12 @@ export function MyBikesPage() {
           </ul>
         )}
       </div>
+
+      {bikes.data && (
+        <Link to="/claim" className={`${buttonClass('secondary', true)} mt-6`}>
+          {t('claim.link')}
+        </Link>
+      )}
     </section>
   )
 }

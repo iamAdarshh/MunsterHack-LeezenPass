@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { apiFetch } from '../../api/client'
-import type { Bike, BikeColor, BikeType, District, StolenBike, TheftInput } from '../../api/types'
+import type { Bike, BikeColor, BikeType, District, StolenBike, TagStatus, TheftInput } from '../../api/types'
 import { bikesKey } from '../bikes/api'
 
 const stolenKey = ['stolen'] as const
@@ -35,7 +35,7 @@ export function useStolenBike(token: string, enabled = true) {
 export function useTag(token: string) {
   return useQuery({
     queryKey: ['tag', token],
-    queryFn: () => apiFetch<{ status: 'registered' | 'stolen' }>(`/api/tags/${encodeURIComponent(token)}`),
+    queryFn: () => apiFetch<TagStatus>(`/api/tags/${encodeURIComponent(token)}`),
   })
 }
 

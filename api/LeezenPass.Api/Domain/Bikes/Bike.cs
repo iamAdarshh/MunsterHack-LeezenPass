@@ -15,6 +15,7 @@ public class Bike
     PublicToken = Base64Url.EncodeToString(RandomNumberGenerator.GetBytes(16));
     CreatedAt = createdAt;
     SetFrameNumber(frameNumber);
+    OwnershipHistory.Add(new BikeOwnershipHistory(Id, ownerId, createdAt));
   }
 
   public Guid Id { get; private set; }
@@ -43,6 +44,7 @@ public class Bike
 
   public List<BikePhoto> Photos { get; private set; } = [];
   public List<TheftReport> TheftReports { get; private set; } = [];
+  public List<BikeOwnershipHistory> OwnershipHistory { get; private set; } = [];
 
   /// <summary>The report that made the bike stolen, if it is stolen right now. Needs TheftReports loaded.</summary>
   public TheftReport? OpenTheftReport => TheftReports.FirstOrDefault(t => t.Status == TheftReportStatus.Open);
@@ -62,6 +64,43 @@ public class Bike
   public bool CanReportStolen => Status != BikeStatus.Stolen;
 
   public bool CanMarkRecovered => Status == BikeStatus.Stolen;
+
+  /// <summary>A stolen bike can't change hands through LeezenPass.</summary>
+  public bool CanTransfer => Status != BikeStatus.Stolen;
+
+  /// <summary>
+  /// Hands the bike to a new owner and keeps the history. Needs OwnershipHistory and Photos loaded.
+  /// The seller's personal data does not travel with the bike: receipt photos (name/address) are removed
+  /// and the FEIN code (encodes the seller's address) is cleared. Returns the removed photos so the
+  /// caller can delete their files.
+  /// </summary>
+  public IReadOnlyList<BikePhoto> TransferTo(Guid newOwnerId, DateTimeOffset now)
+  {
+    if (!CanTransfer)
+    {
+      throw new InvalidOperationException("A stolen bike cannot be transferred.");
+    }
+
+    if (newOwnerId == OwnerId)
+    {
+      throw new InvalidOperationException("The bike already belongs to this user.");
+    }
+
+    foreach (var entry in OwnershipHistory.Where(h => h.ToAt is null))
+    {
+      entry.Close(now);
+    }
+
+    OwnershipHistory.Add(new BikeOwnershipHistory(Id, newOwnerId, now));
+    OwnerId = newOwnerId;
+    // A recovered bike starts fresh with its new owner.
+    Status = BikeStatus.Active;
+    FeinCodeHash = null;
+
+    var receipts = Photos.Where(p => p.Kind == PhotoKind.Receipt).ToList();
+    Photos.RemoveAll(p => p.Kind == PhotoKind.Receipt);
+    return receipts;
+  }
 
   /// <summary>Opens a theft report and puts the bike on the public stolen list. Not allowed while already stolen.</summary>
   public TheftReport ReportStolen(DateTimeOffset stolenAt, double latitude, double longitude, LockType lockType, DateTimeOffset now)

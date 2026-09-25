@@ -17,4 +17,6 @@ public class BikeOwnershipHistory
   public Guid OwnerId { get; private set; }
   public DateTimeOffset FromAt { get; private set; }
   public DateTimeOffset? ToAt { get; private set; }
+
+  internal void Close(DateTimeOffset at) => ToAt ??= at;
 }

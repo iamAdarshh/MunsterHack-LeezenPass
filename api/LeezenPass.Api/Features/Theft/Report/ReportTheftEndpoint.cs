@@ -1,6 +1,7 @@
 using FastEndpoints;
 using LeezenPass.Api.Configurations;
 using LeezenPass.Api.Features.Bikes;
+using LeezenPass.Api.Features.Transfers;
 using LeezenPass.Api.Infrastructure.Data;
 using LeezenPass.Api.Infrastructure.Identity;
 using LeezenPass.Api.Infrastructure.Time;
@@ -32,6 +33,12 @@ public class ReportTheftEndpoint(AppDbContext db, IClock clock) : Endpoint<Repor
     {
       await SendAlreadyStolen(ct);
       return;
+    }
+
+    // An open handover code must not become claimable again after recovery.
+    foreach (var open in await db.OwnershipTransfers.Where(t => t.BikeId == bike.Id).OpenAt(clock.UtcNow).ToListAsync(ct))
+    {
+      open.Cancel(clock.UtcNow);
     }
 
     var report = bike.ReportStolen(req.StolenAt.ToUniversalTime(), req.Latitude, req.Longitude, req.LockType, clock.UtcNow);

@@ -38,6 +38,8 @@ export function TagPage() {
             {t('tag.registeredTitle')}
           </p>
           <p className="text-sm">{t('tag.registeredBody')}</p>
+          {tag.data.transferOpen && <p className="text-sm font-semibold">{t('tag.transferOpen')}</p>}
+          <p className="text-sm">{t('tag.frameHint', { hint: tag.data.frameNumberHint })}</p>
         </div>
       )}
 

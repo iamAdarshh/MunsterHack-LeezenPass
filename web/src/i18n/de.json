@@ -119,7 +119,8 @@
     "reportStolen": "Als gestohlen melden",
     "downloadPass": "Fahrradpass (PDF)",
     "registeredWithPhotos": "Rad registriert, Fotos gespeichert.",
-    "photoUploadFailed": "Ein Foto konnte nicht gespeichert werden – bitte unten erneut hinzufügen."
+    "photoUploadFailed": "Ein Foto konnte nicht gespeichert werden – bitte unten erneut hinzufügen.",
+    "notFound": "Dieses Rad gibt es nicht oder es gehört nicht (mehr) zu deinem Konto."
   },
   "photos": {
     "title": "Fotos",
@@ -205,7 +206,11 @@
     "dateTooOld": "Das Datum liegt zu weit zurück.",
     "alreadyStolen": "Dieses Rad ist bereits als gestohlen gemeldet.",
     "notStolen": "Dieses Rad ist nicht als gestohlen gemeldet.",
-    "aiUnavailable": "Automatische Erkennung gerade nicht möglich."
+    "aiUnavailable": "Automatische Erkennung gerade nicht möglich.",
+    "transferCodeInvalid": "Der Code ist ungültig, abgelaufen oder wurde schon verwendet.",
+    "transferOwnBike": "Das ist dein eigener Code – gib ihn der Person, die das Rad kauft.",
+    "transferStolen": "Ein als gestohlen gemeldetes Rad kann nicht übergeben werden.",
+    "concurrentChange": "Das wurde gerade gleichzeitig geändert. Bitte lade die Seite neu."
   },
   "reportTheft": {
     "title": "Diebstahl melden",
@@ -263,7 +268,9 @@
     "registeredTitle": "Bei LeezenPass registriert",
     "registeredBody": "Für dieses Rad ist kein Diebstahl gemeldet. Du willst ein gebrauchtes Rad kaufen? Prüfe vorher die Rahmennummer.",
     "unknownTitle": "Unbekannter Code",
-    "unknownBody": "Dieser QR-Code gehört zu keinem registrierten Rad. Vorsicht bei einem Kauf: Prüfe die Rahmennummer."
+    "unknownBody": "Dieser QR-Code gehört zu keinem registrierten Rad. Vorsicht bei einem Kauf: Prüfe die Rahmennummer.",
+    "transferOpen": "Verkauf vorbereitet: sichere Übergabe mit LeezenPass-Code möglich.",
+    "frameHint": "Rahmennummer endet auf {{hint}} – vergleiche sie mit dem Rad."
   },
   "district": {
     "altstadt": "Altstadt",
@@ -317,5 +324,43 @@
     },
     "review": "Vorschläge aus den Fotos sind eingetragen. Bitte prüfe sie, bevor du speicherst.",
     "reviewFrame": "Vergleiche die Rahmennummer Zeichen für Zeichen mit dem Rahmen."
+  },
+  "transfer": {
+    "title": "Verkaufen / übergeben",
+    "intro": "Beim Verkauf erzeugst du einen Einmal-Code. Die Käuferin oder der Käufer gibt ihn in LeezenPass ein und wird sofort als neue:r Eigentümer:in eingetragen – mit Nachweis.",
+    "createCode": "Übergabe-Code erzeugen",
+    "newCode": "Neuen Code erzeugen",
+    "replaceConfirm": "Neuen Code erzeugen? Der bisherige Code wird ungültig.",
+    "codeLabel": "Übergabe-Code",
+    "validUntil": "Gültig bis {{date}} · nur einmal verwendbar",
+    "copyCode": "Code kopieren",
+    "openHidden": "Übergabe vorbereitet (gültig bis {{date}}). Den Code zeigen wir aus Sicherheitsgründen nur einmal – bei Bedarf einen neuen erzeugen.",
+    "warning": "Gib den Code erst bei der Übergabe weiter, wenn bezahlt ist. Wer den Code eingibt, wird Eigentümer:in.",
+    "snippetTitle": "Text für deine Anzeige (z. B. Kleinanzeigen)",
+    "copySnippet": "Anzeigentext kopieren",
+    "cancel": "Übergabe abbrechen",
+    "certificate": "Eigentumsnachweis (PDF)",
+    "previousOwners_one": "{{count}} Vorbesitzer:in",
+    "previousOwners_other": "{{count}} Vorbesitzer:innen",
+    "snippet": "✅ LeezenPass verifiziert\nDieses Fahrrad ({{title}}, Rahmennummer endet auf {{hint}}) ist bei LeezenPass registriert und nicht als gestohlen gemeldet. Die Übergabe läuft über einen Einmal-Code – du wirst direkt als neue:r Eigentümer:in eingetragen.\nSelbst prüfen: {{url}}"
+  },
+  "claim": {
+    "link": "Gekauftes Rad mit Code übernehmen",
+    "title": "Rad übernehmen",
+    "body": "Gib den Übergabe-Code ein, den du von der Verkäuferin oder dem Verkäufer bekommen hast.",
+    "code": "Übergabe-Code",
+    "codeHint": "8 Zeichen, z. B. ABCD-EFGH. Groß-/Kleinschreibung egal.",
+    "submit": "Rad übernehmen",
+    "success": "Rad übernommen – du bist jetzt als Eigentümer:in eingetragen. Deinen Eigentumsnachweis findest du unten."
+  },
+  "verify": {
+    "title": "Eigentumsnachweis prüfen",
+    "validTitle": "Echter LeezenPass-Eigentumsnachweis",
+    "transferredAt": "Übertragen am {{date}}",
+    "frameHint": "endet auf {{hint}}",
+    "transferredAgain": "Das Rad wurde seitdem an eine weitere Person übertragen.",
+    "stolenNow": "Dieses Rad ist aktuell als gestohlen gemeldet. Gesehen? Ruf 110 an.",
+    "notFoundTitle": "Nachweis nicht gefunden",
+    "notFoundBody": "Diesen Eigentumsnachweis gibt es bei LeezenPass nicht. Er könnte gefälscht sein."
   }
 }

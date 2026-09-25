@@ -17,7 +17,13 @@ public class OwnershipTransferConfiguration : IEntityTypeConfiguration<Ownership
     builder.Property(t => t.ToUserId).HasColumnName("to_user");
     builder.Property(t => t.CodeHash).HasMaxLength(64).IsRequired();
 
+    builder.Property(t => t.VerifyToken).HasMaxLength(32);
+
+    // Postgres xmin as optimistic concurrency token: two buyers racing for one code can't both win.
+    builder.Property<uint>("Version").IsRowVersion();
+
     builder.HasIndex(t => t.CodeHash).IsUnique();
+    builder.HasIndex(t => t.VerifyToken).IsUnique();
     builder.HasIndex(t => t.BikeId);
 
     builder.HasOne<Bike>().WithMany().HasForeignKey(t => t.BikeId).OnDelete(DeleteBehavior.Cascade);

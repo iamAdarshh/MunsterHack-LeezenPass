@@ -33,6 +33,16 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     modelBuilder.Entity<IdentityUserToken<Guid>>().ToTable("user_tokens");
 
     modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+
+    // Domain entities create their own ids (Guid.CreateVersion7) so aggregates can add children through
+    // navigations (bike.TransferTo adds a history row). Without this EF treats a set Guid key as
+    // "already exists" and issues an UPDATE instead of an INSERT.
+    modelBuilder.Entity<Bike>().Property(e => e.Id).ValueGeneratedNever();
+    modelBuilder.Entity<BikePhoto>().Property(e => e.Id).ValueGeneratedNever();
+    modelBuilder.Entity<BikeOwnershipHistory>().Property(e => e.Id).ValueGeneratedNever();
+    modelBuilder.Entity<TheftReport>().Property(e => e.Id).ValueGeneratedNever();
+    modelBuilder.Entity<OwnershipTransfer>().Property(e => e.Id).ValueGeneratedNever();
+    modelBuilder.Entity<Lookup>().Property(e => e.Id).ValueGeneratedNever();
   }
 
   protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)

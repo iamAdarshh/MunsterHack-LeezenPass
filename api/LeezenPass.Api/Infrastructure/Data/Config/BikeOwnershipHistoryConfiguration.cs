@@ -13,7 +13,7 @@ public class BikeOwnershipHistoryConfiguration : IEntityTypeConfiguration<BikeOw
     builder.HasKey(h => h.Id);
     builder.HasIndex(h => h.BikeId);
 
-    builder.HasOne<Bike>().WithMany().HasForeignKey(h => h.BikeId).OnDelete(DeleteBehavior.Cascade);
+    builder.HasOne<Bike>().WithMany(b => b.OwnershipHistory).HasForeignKey(h => h.BikeId).OnDelete(DeleteBehavior.Cascade);
     builder.HasOne<AppUser>().WithMany().HasForeignKey(h => h.OwnerId).OnDelete(DeleteBehavior.Cascade);
   }
 }

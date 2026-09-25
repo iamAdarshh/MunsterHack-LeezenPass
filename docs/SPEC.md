@@ -37,6 +37,8 @@
 4. **Ownership transfer**
    - Seller creates 8-char code (unambiguous alphabet), valid 48 h, single use, stored hashed.
    - Buyer claims → owner changes, history kept, certificate PDF with QR to verification page.
+   - The seller's personal data stays behind: receipt photos are deleted and the FEIN hash (encodes the seller's address) is cleared on transfer. Reporting a theft cancels open codes.
+   - Seller shares a "LeezenPass verifiziert" text for marketplace listings, linking to `/b/{token}` (registered, handover prepared, frame number hint).
 
 ### Stretch (pick one)
 
@@ -58,7 +60,7 @@ Police system integration, scraping marketplaces, payments, native apps, push no
 | bike_photos | id, bike_id, kind (side/frame_no/detail/receipt), path, embedding vector(512) nullable |
 | bike_ownership_history | id, bike_id, owner_id, from_at, to_at |
 | theft_reports | id, bike_id, stolen_at, location geography(Point,4326), district (derived, the only public location), location_note (owner only), lock_type, police_case_no, status (open/recovered/closed) |
-| ownership_transfers | id, bike_id, from_user, to_user, code_hash, expires_at, completed_at |
+| ownership_transfers | id, bike_id, from_user, to_user, code_hash, expires_at, completed_at, verify_token (set on completion; certificate QR). Postgres `xmin` is the concurrency token, so a code can only be claimed once even under a race |
 | sightings | id, reporter_id nullable, photo_path, location geography(Point,4326), seen_at, type, color, notes |
 | sighting_matches | sighting_id, bike_id, score, owner_decision (pending/mine/not_mine) |
 | relay_messages | id, bike_id, sender_contact, body, created_at |
@@ -87,11 +89,11 @@ Indexes: unique `frame_no_norm`; index `frame_no_loose`, `fein_code_hash`; uniqu
 | GET | `/api/stolen/{token}` | One stolen bike (share card, QR tag page); 404 if not stolen | Public |
 | GET | `/api/stolen/{token}/photos/{photoId}?size=thumb` | Photo of a stolen bike (side/detail only, only while stolen) | Public |
 | POST | `/api/check` | Frame no. / FEIN → status | Public, rate-limited, captcha |
-| POST | `/api/bikes/{id}/transfers` | Create transfer code | Owner |
-| POST | `/api/transfers/claim` | Claim code | User |
+| GET / POST / DELETE | `/api/bikes/{id}/transfers` | Transfer state (open code, certificate id, previous owners) / create code (plain code only in this response, replaces an open one, 409 if stolen) / cancel open code | Owner |
+| POST | `/api/transfers/claim` | Claim code: owner changes, history kept. Unknown/expired/used codes all get the same 400; rate policy `claim` (10 per 10 min per user) | User |
 | GET | `/api/transfers/{id}/certificate.pdf` | Certificate PDF | New owner |
-| GET | `/api/verify/{token}` | Certificate verification | Public |
-| GET | `/b/{token}` (web route) + `GET /api/tags/{token}` | QR tag page data. Until the stretch feature: `/b/{token}` shows the stolen card via `/api/stolen/{token}`, otherwise only "registered" | Public |
+| GET | `/api/verify/{token}` | Certificate verification: date, bike attributes, frame number hint ("…5678"), still with this owner, current status. No identities | Public |
+| GET | `/b/{token}` (web route) + `GET /api/tags/{token}` | QR tag page data. Until the stretch feature: `/b/{token}` shows the stolen card via `/api/stolen/{token}`, otherwise "registered", whether a handover is prepared (open transfer) and the frame number hint. The "LeezenPass verifiziert" listing text links here | Public |
 | POST | `/api/tags/{token}/message` | Relay message | Public, rate-limited |
 | POST | `/api/sightings` | Report sighting | Public |
 | GET | `/api/bikes/{id}/matches` | Candidate matches | Owner |
