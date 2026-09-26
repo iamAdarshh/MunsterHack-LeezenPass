@@ -1,5 +1,6 @@
 using LeezenPass.Api.Configurations;
 using LeezenPass.Api.Domain.Bikes;
+using LeezenPass.Api.Domain.Goodwill;
 using LeezenPass.Api.Domain.Theft;
 using LeezenPass.Api.Domain.Transfers;
 using LeezenPass.Api.Infrastructure.Data;
@@ -181,6 +182,7 @@ public class DemoSeeder(
     }
 
     db.Bikes.AddRange(bikes);
+    db.GoodwillEvents.AddRange(GoodwillFor(bikes));
     var code = Domain.Transfers.TransferCode.TryParse(DemoScenario.TransferCode, out var parsed)
       ? parsed
       : throw new InvalidOperationException("DemoScenario.TransferCode is not a valid transfer code.");
@@ -201,6 +203,37 @@ public class DemoSeeder(
       SamplePhotos: samples);
     logger.LogInformation("Demo data seeded: {Bikes} bikes, {Reports} theft reports, {Photos} photos", result.Bikes, result.TheftReports, result.Photos);
     return result;
+  }
+
+  /// <summary>
+  /// The ledger the seeded bikes would have earned (same rules as <see cref="GoodwillPolicy"/>): registration points for
+  /// each user's first bikes, evidence points for receipt+possession checked bikes, partner points for partner bikes.
+  /// </summary>
+  private static IEnumerable<GoodwillEvent> GoodwillFor(IEnumerable<Bike> bikes)
+  {
+    foreach (var owned in bikes.GroupBy(b => b.OwnerId))
+    {
+      var credited = 0;
+      foreach (var bike in owned.OrderBy(b => b.CreatedAt))
+      {
+        // The Stevens gets no registration credit so the demo owner stays below the cap: registering live earns +10.
+        if (GoodwillPolicy.MayCreditRegistration(credited) && bike.FrameNoRaw != DemoScenario.CleanFrame)
+        {
+          credited++;
+          yield return new GoodwillEvent(bike.OwnerId, GoodwillAction.RegisterBike, GoodwillRefTypes.Bike, bike.Id, bike.CreatedAt);
+        }
+
+        if (bike.TrustSource == TrustSource.ReceiptPossession)
+        {
+          yield return new GoodwillEvent(
+            bike.OwnerId, GoodwillAction.EvidenceVerified, GoodwillRefTypes.Frame, GoodwillRefTypes.FrameId(bike.FrameNoNorm), bike.TrustVerifiedAt ?? bike.CreatedAt);
+        }
+        else if (bike.TrustSource == TrustSource.Partner && bike.OwnershipHistory.Count > 1)
+        {
+          yield return new GoodwillEvent(bike.OwnerId, GoodwillAction.PartnerRegistration, GoodwillRefTypes.Bike, bike.Id, bike.CreatedAt);
+        }
+      }
+    }
   }
 
   /// <summary>

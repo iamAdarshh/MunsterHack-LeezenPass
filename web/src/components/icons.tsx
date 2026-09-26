@@ -60,6 +60,12 @@ export const ShieldIcon = (props: IconProps) => (
   </Icon>
 )
 
+export const StarIcon = (props: IconProps) => (
+  <Icon {...props}>
+    <path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z" />
+  </Icon>
+)
+
 export const PlusIcon = (props: IconProps) => (
   <Icon {...props}>
     <path d="M12 5v14M5 12h14" />

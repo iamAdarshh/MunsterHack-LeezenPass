@@ -5,6 +5,7 @@ using LeezenPass.Api.Configurations;
 using LeezenPass.Api.Domain.Bikes;
 using LeezenPass.Api.Domain.Verification;
 using LeezenPass.Api.Features.Bikes.UploadPhoto;
+using LeezenPass.Api.Features.Goodwill;
 using LeezenPass.Api.Infrastructure.Data;
 using LeezenPass.Api.Infrastructure.Identity;
 using LeezenPass.Api.Infrastructure.Images;
@@ -46,6 +47,7 @@ public class VerifyReceiptEndpoint(
   ImageProcessor images,
   IFileStorage storage,
   IClock clock,
+  GoodwillService goodwill,
   IOptions<VisionOptions> visionOptions,
   ILogger<VerifyReceiptEndpoint> logger) : Endpoint<VerifyReceiptRequest, VerificationResultResponse>
 {
@@ -108,6 +110,7 @@ public class VerifyReceiptEndpoint(
 
     var now = clock.UtcNow;
     var outcome = VerificationRules.Receipt(reading, bike, DateOnly.FromDateTime(now.UtcDateTime));
+    var points = 0;
     if (outcome != CheckOutcome.Retry)
     {
       Guid? photoId = null;
@@ -122,10 +125,10 @@ public class VerifyReceiptEndpoint(
 
       var status = outcome == CheckOutcome.Passed ? EvidenceStatus.Passed : EvidenceStatus.Failed;
       var evidence = new OwnershipEvidence(bike.Id, userId, EvidenceKind.Receipt, status, photoId, JsonSerializer.Serialize(reading), now);
-      await db.RecordAsync(bike, userId, evidence, now, ct);
-      await db.SaveChangesAsync(ct);
+      var raised = await db.RecordAsync(bike, userId, evidence, now, ct);
+      points = await db.SaveCheckAsync(goodwill, bike, userId, raised, ct);
     }
 
-    await Send.OkAsync(new VerificationResultResponse(outcome, await db.StatusAsync(bike, userId, now, ct)), ct);
+    await Send.OkAsync(new VerificationResultResponse(outcome, await db.StatusAsync(bike, userId, now, ct), points), ct);
   }
 }

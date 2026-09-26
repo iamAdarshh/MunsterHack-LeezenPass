@@ -10,6 +10,7 @@ import { buttonClass } from '../../components/buttonClass'
 import { FormField, inputClass } from '../../components/FormField'
 import { Alert, LoadingState } from '../../components/States'
 import { useErrorText } from '../../i18n/useErrorText'
+import { GoodwillCard } from '../goodwill/GoodwillCard'
 import { useLogin, useLogout, useMe, useRegisterAccount } from './api'
 
 type Mode = 'login' | 'register'
@@ -59,6 +60,7 @@ function AccountPanel({ email }: { email: string }) {
   return (
     <div className="mt-4 space-y-4">
       <p className="text-slate-600">{t('account.signedInAs', { email })}</p>
+      <GoodwillCard />
       <Link to="/bikes" className={buttonClass('primary', true)}>
         {t('nav.myBikes')}
       </Link>

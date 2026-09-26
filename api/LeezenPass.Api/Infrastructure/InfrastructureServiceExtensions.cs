@@ -34,6 +34,7 @@ public static class InfrastructureServiceExtensions
     services.AddSingleton<ImageProcessor>();
     services.AddScoped<DemoSeeder>();
     services.AddSingleton<Features.Bikes.FrameConflicts>();
+    services.AddScoped<Features.Goodwill.GoodwillService>();
 
     // Local disk until a MinIO implementation is needed.
     services.AddSingleton<IFileStorage, LocalFileStorage>();

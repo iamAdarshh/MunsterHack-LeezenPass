@@ -1,7 +1,10 @@
 using FastEndpoints;
 using FluentValidation;
 using LeezenPass.Api.Configurations;
+using LeezenPass.Api.Domain.Bikes;
+using LeezenPass.Api.Domain.Goodwill;
 using LeezenPass.Api.Domain.Transfers;
+using LeezenPass.Api.Features.Goodwill;
 using LeezenPass.Api.Infrastructure.Data;
 using LeezenPass.Api.Infrastructure.Identity;
 using LeezenPass.Api.Infrastructure.Storage;
@@ -29,7 +32,12 @@ public class ClaimTransferValidator : Validator<ClaimTransferRequest>
 /// Buyer enters the code: the bike moves to the buyer, the history is kept.
 /// Unknown, expired and used codes get the same answer, so guessing learns nothing.
 /// </summary>
-public class ClaimTransferEndpoint(AppDbContext db, IClock clock, IFileStorage storage, ILogger<ClaimTransferEndpoint> logger)
+public class ClaimTransferEndpoint(
+  AppDbContext db,
+  IClock clock,
+  IFileStorage storage,
+  GoodwillService goodwill,
+  ILogger<ClaimTransferEndpoint> logger)
   : Endpoint<ClaimTransferRequest, ClaimTransferResponse>
 {
   public override void Configure()
@@ -78,9 +86,20 @@ public class ClaimTransferEndpoint(AppDbContext db, IClock clock, IFileStorage s
     var removedPhotos = bike.TransferTo(userId, now);
     db.BikePhotos.RemoveRange(removedPhotos);
 
+    await using var transaction = await db.Database.BeginTransactionAsync(ct);
     try
     {
       await db.SaveChangesAsync(ct);
+
+      // A bike a partner (bike shop, ADFC event) registered for this customer: the customer earns points on claiming it.
+      var fromPartner = bike.TrustSource == TrustSource.Partner && await db.UserRoles.AnyAsync(
+        ur => ur.UserId == transfer.FromUserId && db.Roles.Any(r => r.Id == ur.RoleId && r.Name == AppRoles.Partner), ct);
+      if (fromPartner)
+      {
+        await goodwill.CreditAsync(userId, GoodwillAction.PartnerRegistration, GoodwillRefTypes.Bike, bike.Id, ct);
+      }
+
+      await transaction.CommitAsync(ct);
     }
     catch (DbUpdateConcurrencyException ex)
     {

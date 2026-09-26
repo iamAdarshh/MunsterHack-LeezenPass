@@ -432,5 +432,27 @@
     "receiptFailed": "Dieser Beleg passt nicht zu diesem Rad: Weder die Rahmennummer noch Marke, Modell und Kaufdatum stimmen überein.",
     "possessionFailed": "Das passt nicht: Code oder Rahmennummer stimmen nicht. Prüfe beides und versuch es noch einmal.",
     "aiUnavailable": "Die Prüfung ist gerade nicht möglich. Bitte versuch es gleich noch einmal."
+  },
+  "goodwill": {
+    "title": "Goodwill-Punkte",
+    "points_one": "{{count}} Punkt",
+    "points_other": "{{count}} Punkte",
+    "next_one": "Noch {{count}} Punkt bis „{{badge}}“",
+    "next_other": "Noch {{count}} Punkte bis „{{badge}}“",
+    "badge": {
+      "starter": "Leezen-Starter:in",
+      "protector": "Leezen-Schützer:in",
+      "hero": "Leezen-Held:in"
+    },
+    "action": {
+      "register_bike": "Rad registriert",
+      "evidence_verified": "Eigentum per Beleg geprüft",
+      "partner_registration": "Rad über Partner registriert"
+    },
+    "revoked": "zurückgenommen (Rad gelöscht)",
+    "empty": "Noch keine Punkte. Registriere dein Rad (+10) und weise dein Eigentum nach (+20).",
+    "rules": "Punkte gibt es nur für geprüfte Ergebnisse, nicht fürs Melden. Registrierung zählt für bis zu 3 Räder.",
+    "credited_one": "+{{count}} Punkt gutgeschrieben",
+    "credited_other": "+{{count}} Punkte gutgeschrieben"
   }
 }

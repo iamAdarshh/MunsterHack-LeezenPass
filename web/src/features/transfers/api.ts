@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { apiFetch } from '../../api/client'
+import { goodwillKey } from '../goodwill/api'
 import type { CreatedTransfer, TransferStatus, VerifyResult } from '../../api/types'
 import { bikesKey } from '../bikes/api'
 
@@ -34,7 +35,11 @@ export function useClaimTransfer() {
     mutationFn: (code: string) =>
       apiFetch<{ bikeId: string; transferId: string }>('/api/transfers/claim', { method: 'POST', json: { code } }),
     // The bike now belongs to the signed-in user.
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: bikesKey }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: bikesKey })
+      // Claiming a partner-registered bike earns points.
+      void queryClient.invalidateQueries({ queryKey: goodwillKey })
+    },
   })
 }
 

@@ -1,4 +1,5 @@
 using LeezenPass.Api.Domain.Bikes;
+using LeezenPass.Api.Domain.Goodwill;
 using LeezenPass.Api.Domain.Lookups;
 using LeezenPass.Api.Domain.Theft;
 using LeezenPass.Api.Domain.Transfers;
@@ -21,6 +22,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
   public DbSet<Lookup> Lookups => Set<Lookup>();
   public DbSet<PossessionChallenge> PossessionChallenges => Set<PossessionChallenge>();
   public DbSet<OwnershipEvidence> OwnershipEvidence => Set<OwnershipEvidence>();
+  public DbSet<GoodwillEvent> GoodwillEvents => Set<GoodwillEvent>();
 
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {
@@ -48,6 +50,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     modelBuilder.Entity<Lookup>().Property(e => e.Id).ValueGeneratedNever();
     modelBuilder.Entity<PossessionChallenge>().Property(e => e.Id).ValueGeneratedNever();
     modelBuilder.Entity<OwnershipEvidence>().Property(e => e.Id).ValueGeneratedNever();
+    modelBuilder.Entity<GoodwillEvent>().Property(e => e.Id).ValueGeneratedNever();
   }
 
   protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
@@ -63,5 +66,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     configurationBuilder.Properties<TrustSource>().HaveConversion<string>().HaveMaxLength(20);
     configurationBuilder.Properties<EvidenceKind>().HaveConversion<string>().HaveMaxLength(20);
     configurationBuilder.Properties<EvidenceStatus>().HaveConversion<string>().HaveMaxLength(20);
+    configurationBuilder.Properties<GoodwillAction>().HaveConversion<string>().HaveMaxLength(30);
+    configurationBuilder.Properties<GoodwillStatus>().HaveConversion<string>().HaveMaxLength(20);
   }
 }

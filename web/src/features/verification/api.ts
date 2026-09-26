@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { apiFetch } from '../../api/client'
 import type { PossessionChallenge, VerificationResult, VerificationStatus } from '../../api/types'
 import { bikesKey } from '../bikes/api'
+import { goodwillKey } from '../goodwill/api'
 
 const statusKey = (bikeId: string) => ['verification', bikeId] as const
 
@@ -18,6 +19,7 @@ function useOnResult(bikeId: string) {
     queryClient.setQueryData(statusKey(bikeId), result.status)
     // Trust level and (for a passed receipt) the photo list changed.
     void queryClient.invalidateQueries({ queryKey: bikesKey })
+    if (result.pointsCredited > 0) void queryClient.invalidateQueries({ queryKey: goodwillKey })
   }
 }
 

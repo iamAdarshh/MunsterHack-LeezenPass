@@ -1,5 +1,7 @@
 using LeezenPass.Api.Domain.Bikes;
+using LeezenPass.Api.Domain.Goodwill;
 using LeezenPass.Api.Domain.Verification;
+using LeezenPass.Api.Features.Goodwill;
 using LeezenPass.Api.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,7 +15,10 @@ public sealed record VerificationStatusResponse(
   DateTimeOffset? ChallengeExpiresAt);
 
 /// <summary>Result of one receipt or possession photo. <c>retry</c>: photo unclear, take a new one (not a failure).</summary>
-public sealed record VerificationResultResponse(CheckOutcome Outcome, VerificationStatusResponse Status);
+/// <param name="Outcome">passed | failed | retry.</param>
+/// <param name="Status">Status after this check.</param>
+/// <param name="PointsCredited">Goodwill points this check earned (only when the bike just reached EvidenceChecked).</param>
+public sealed record VerificationResultResponse(CheckOutcome Outcome, VerificationStatusResponse Status, int PointsCredited = 0);
 
 public static class VerificationQueries
 {
@@ -38,23 +43,42 @@ public static class VerificationQueries
     return new VerificationStatusResponse(bike.TrustLevel, Of(EvidenceKind.Receipt), Of(EvidenceKind.Possession), challengeExpiresAt);
   }
 
-  /// <summary>Records one check; raises the trust level once receipt AND possession have passed for this owner.</summary>
-  public static async Task RecordAsync(
+  /// <summary>
+  /// Records one check; raises the trust level once receipt AND possession have passed for this owner.
+  /// Returns true when this check raised it (the caller credits goodwill after saving).
+  /// </summary>
+  public static async Task<bool> RecordAsync(
     this AppDbContext db, Bike bike, Guid userId, OwnershipEvidence evidence, DateTimeOffset now, CancellationToken ct)
   {
     db.OwnershipEvidence.Add(evidence);
     if (evidence.Status != EvidenceStatus.Passed)
     {
-      return;
+      return false;
     }
 
     var passed = await db.OwnershipEvidence
       .Where(e => e.BikeId == bike.Id && e.UserId == userId && e.Status == EvidenceStatus.Passed)
       .Select(e => e.Kind)
       .ToListAsync(ct);
+    var before = bike.TrustLevel;
     if (VerificationRules.BothPassed(passed.Append(evidence.Kind)))
     {
       bike.MarkEvidenceChecked(now);
     }
+
+    return bike.TrustLevel != before;
+  }
+
+  /// <summary>Saves the check and, if it raised the trust level, credits goodwill in the same transaction.</summary>
+  public static async Task<int> SaveCheckAsync(
+    this AppDbContext db, GoodwillService goodwill, Bike bike, Guid userId, bool trustRaised, CancellationToken ct)
+  {
+    await using var transaction = await db.Database.BeginTransactionAsync(ct);
+    await db.SaveChangesAsync(ct);
+    var points = trustRaised
+      ? await goodwill.CreditAsync(userId, GoodwillAction.EvidenceVerified, GoodwillRefTypes.Frame, GoodwillRefTypes.FrameId(bike.FrameNoNorm), ct)
+      : 0;
+    await transaction.CommitAsync(ct);
+    return points;
   }
 }

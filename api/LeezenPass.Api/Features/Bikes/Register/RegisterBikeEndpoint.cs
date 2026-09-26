@@ -1,7 +1,9 @@
 using FastEndpoints;
 using LeezenPass.Api.Configurations;
 using LeezenPass.Api.Domain.Bikes;
+using LeezenPass.Api.Domain.Goodwill;
 using LeezenPass.Api.Features.Bikes.Get;
+using LeezenPass.Api.Features.Goodwill;
 using LeezenPass.Api.Infrastructure;
 using LeezenPass.Api.Infrastructure.Data;
 using LeezenPass.Api.Infrastructure.Identity;
@@ -15,7 +17,12 @@ namespace LeezenPass.Api.Features.Bikes.Register;
 /// Registers a bike. An existing frame number always gets the same 409, whether that bike is stolen or not
 /// (see <see cref="FrameConflicts"/>).
 /// </summary>
-public class RegisterBikeEndpoint(AppDbContext db, IClock clock, IOptions<FeinOptions> fein, FrameConflicts conflicts)
+public class RegisterBikeEndpoint(
+  AppDbContext db,
+  IClock clock,
+  IOptions<FeinOptions> fein,
+  FrameConflicts conflicts,
+  GoodwillService goodwill)
   : Endpoint<RegisterBikeRequest, BikeResponse>
 {
   public override void Configure()
@@ -52,9 +59,13 @@ public class RegisterBikeEndpoint(AppDbContext db, IClock clock, IOptions<FeinOp
 
     db.Bikes.Add(bike);
 
+    // Points commit together with the registration (SPEC: same transaction as the outcome).
+    await using var transaction = await db.Database.BeginTransactionAsync(ct);
     try
     {
       await db.SaveChangesAsync(ct);
+      await goodwill.CreditAsync(userId, GoodwillAction.RegisterBike, GoodwillRefTypes.Bike, bike.Id, ct);
+      await transaction.CommitAsync(ct);
     }
     catch (DbUpdateException ex) when (ex.IsUniqueViolation())
     {

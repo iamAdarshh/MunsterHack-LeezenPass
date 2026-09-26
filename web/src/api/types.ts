@@ -207,6 +207,8 @@ export interface VerificationStatus {
 export interface VerificationResult {
   outcome: 'passed' | 'failed' | 'retry'
   status: VerificationStatus
+  /** Goodwill points this check earned (confirmed by the API). */
+  pointsCredited: number
 }
 
 /** The plain code only exists in this response. */
@@ -214,3 +216,20 @@ export interface PossessionChallenge {
   code: string
   expiresAt: string
 }
+
+export type GoodwillAction = 'register_bike' | 'evidence_verified' | 'partner_registration'
+export type BadgeKey = 'starter' | 'protector' | 'hero'
+
+export interface Badge {
+  key: BadgeKey
+  threshold: number
+}
+
+/** GET /api/me/goodwill: only the signed-in user's own ledger. */
+export interface Goodwill {
+  total: number
+  badge: Badge | null
+  nextBadge: Badge | null
+  history: { action: GoodwillAction; points: number; status: 'credited' | 'revoked'; createdAt: string }[]
+}
+

@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { apiFetch } from '../../api/client'
+import { goodwillKey } from '../goodwill/api'
 import type { Bike, BikeInput, BikePhoto, PhotoKind, VisionSuggestion } from '../../api/types'
 
 export const bikesKey = ['bikes'] as const
@@ -20,6 +21,7 @@ export function useRegisterBike() {
     onSuccess: (bike) => {
       queryClient.setQueryData(bikeKey(bike.id), bike)
       void queryClient.invalidateQueries({ queryKey: bikesKey, exact: true })
+      void queryClient.invalidateQueries({ queryKey: goodwillKey })
     },
   })
 }
@@ -42,6 +44,7 @@ export function useDeleteBike(id: string) {
     onSuccess: () => {
       queryClient.removeQueries({ queryKey: bikeKey(id) })
       void queryClient.invalidateQueries({ queryKey: bikesKey, exact: true })
+      void queryClient.invalidateQueries({ queryKey: goodwillKey })
     },
   })
 }

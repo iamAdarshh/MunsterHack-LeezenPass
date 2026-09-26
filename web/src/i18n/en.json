@@ -432,5 +432,27 @@
     "receiptFailed": "This receipt doesn't match this bike: neither the frame number nor brand, model and purchase date match.",
     "possessionFailed": "That doesn't match: the code or the frame number is different. Check both and try again.",
     "aiUnavailable": "The check isn't possible right now. Please try again in a moment."
+  },
+  "goodwill": {
+    "title": "Goodwill points",
+    "points_one": "{{count}} point",
+    "points_other": "{{count}} points",
+    "next_one": "{{count}} point to “{{badge}}”",
+    "next_other": "{{count}} points to “{{badge}}”",
+    "badge": {
+      "starter": "Leezen Starter",
+      "protector": "Leezen Protector",
+      "hero": "Leezen Hero"
+    },
+    "action": {
+      "register_bike": "Bike registered",
+      "evidence_verified": "Ownership checked with receipt",
+      "partner_registration": "Bike registered via partner"
+    },
+    "revoked": "taken back (bike deleted)",
+    "empty": "No points yet. Register your bike (+10) and prove ownership (+20).",
+    "rules": "Points only for verified outcomes, not for submissions. Registration counts for up to 3 bikes.",
+    "credited_one": "+{{count}} point credited",
+    "credited_other": "+{{count}} points credited"
   }
 }

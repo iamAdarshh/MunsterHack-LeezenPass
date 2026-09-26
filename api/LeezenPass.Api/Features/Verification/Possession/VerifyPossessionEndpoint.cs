@@ -4,6 +4,7 @@ using FluentValidation;
 using LeezenPass.Api.Configurations;
 using LeezenPass.Api.Domain.Verification;
 using LeezenPass.Api.Features.Bikes.UploadPhoto;
+using LeezenPass.Api.Features.Goodwill;
 using LeezenPass.Api.Infrastructure.Data;
 using LeezenPass.Api.Infrastructure.Identity;
 using LeezenPass.Api.Infrastructure.Images;
@@ -47,6 +48,7 @@ public class VerifyPossessionEndpoint(
   IVisionExtractor vision,
   ImageProcessor images,
   IClock clock,
+  GoodwillService goodwill,
   IOptions<VisionOptions> visionOptions,
   ILogger<VerifyPossessionEndpoint> logger) : Endpoint<VerifyPossessionRequest, VerificationResultResponse>
 {
@@ -115,6 +117,7 @@ public class VerifyPossessionEndpoint(
     }
 
     var outcome = VerificationRules.Possession(reading, req.Code, bike);
+    var points = 0;
     if (outcome != CheckOutcome.Retry)
     {
       // Single use: a pass or a fail uses the code up; only an unclear photo (retry) keeps it.
@@ -124,10 +127,10 @@ public class VerifyPossessionEndpoint(
       var stored = reading with { CodeValue = null };
       var status = outcome == CheckOutcome.Passed ? EvidenceStatus.Passed : EvidenceStatus.Failed;
       var evidence = new OwnershipEvidence(bike.Id, userId, EvidenceKind.Possession, status, null, JsonSerializer.Serialize(stored), now);
-      await db.RecordAsync(bike, userId, evidence, now, ct);
-      await db.SaveChangesAsync(ct);
+      var raised = await db.RecordAsync(bike, userId, evidence, now, ct);
+      points = await db.SaveCheckAsync(goodwill, bike, userId, raised, ct);
     }
 
-    await Send.OkAsync(new VerificationResultResponse(outcome, await db.StatusAsync(bike, userId, now, ct)), ct);
+    await Send.OkAsync(new VerificationResultResponse(outcome, await db.StatusAsync(bike, userId, now, ct), points), ct);
   }
 }
