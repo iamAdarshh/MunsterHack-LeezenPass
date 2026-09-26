@@ -54,5 +54,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     configurationBuilder.Properties<TheftReportStatus>().HaveConversion<string>().HaveMaxLength(20);
     configurationBuilder.Properties<LockType>().HaveConversion<string>().HaveMaxLength(20);
     configurationBuilder.Properties<LookupResult>().HaveConversion<string>().HaveMaxLength(20);
+    configurationBuilder.Properties<TrustLevel>().HaveConversion<string>().HaveMaxLength(20);
+    configurationBuilder.Properties<TrustSource>().HaveConversion<string>().HaveMaxLength(20);
   }
 }

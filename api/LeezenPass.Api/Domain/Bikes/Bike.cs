@@ -42,6 +42,11 @@ public class Bike
   public BikeStatus Status { get; private set; } = BikeStatus.Active;
   public DateTimeOffset CreatedAt { get; private set; }
 
+  /// <summary>Only changed through the Mark* methods below, never set directly.</summary>
+  public TrustLevel TrustLevel { get; private set; } = TrustLevel.SelfDeclared;
+  public TrustSource? TrustSource { get; private set; }
+  public DateTimeOffset? TrustVerifiedAt { get; private set; }
+
   public List<BikePhoto> Photos { get; private set; } = [];
   public List<TheftReport> TheftReports { get; private set; } = [];
   public List<BikeOwnershipHistory> OwnershipHistory { get; private set; } = [];
@@ -100,6 +105,30 @@ public class Bike
     var receipts = Photos.Where(p => p.Kind == PhotoKind.Receipt).ToList();
     Photos.RemoveAll(p => p.Kind == PhotoKind.Receipt);
     return receipts;
+  }
+
+  /// <summary>
+  /// Receipt check and possession check both passed. Never lowers a higher level (a partner-verified bike
+  /// stays partner-verified).
+  /// </summary>
+  public void MarkEvidenceChecked(DateTimeOffset now)
+  {
+    if (TrustLevel >= TrustLevel.EvidenceChecked)
+    {
+      return;
+    }
+
+    TrustLevel = TrustLevel.EvidenceChecked;
+    TrustSource = Bikes.TrustSource.ReceiptPossession;
+    TrustVerifiedAt = now;
+  }
+
+  /// <summary>Registered by a partner (bike shop, ADFC coding event) who has seen the bike and its papers.</summary>
+  public void MarkPartnerVerified(DateTimeOffset now)
+  {
+    TrustLevel = TrustLevel.ThirdPartyVerified;
+    TrustSource = Bikes.TrustSource.Partner;
+    TrustVerifiedAt = now;
   }
 
   /// <summary>Opens a theft report and puts the bike on the public stolen list. Not allowed while already stolen.</summary>

@@ -1,5 +1,6 @@
 using LeezenPass.Api.Infrastructure.Data;
 using LeezenPass.Api.Infrastructure.Identity;
+using Microsoft.AspNetCore.Identity;
 
 namespace LeezenPass.Api.Configurations;
 
@@ -16,6 +17,7 @@ public static class AuthConfigs
               // Upper, lower and digit are still required; symbols are a pain on a phone keyboard.
               o.Password.RequireNonAlphanumeric = false;
             })
+            .AddRoles<IdentityRole<Guid>>()
             .AddEntityFrameworkStores<AppDbContext>();
 
     services.ConfigureApplicationCookie(o =>

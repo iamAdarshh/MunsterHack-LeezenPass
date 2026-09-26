@@ -11,7 +11,10 @@ Use this when reviewing a diff or PR. This is a 36-hour hackathon project: optim
 
 ## Blockers (always flag)
 
+- A completed transfer leaves the previous owner's receipt/possession photos or FEIN hash behind, or a theft report leaves open transfer codes active.
+
 ### Privacy and security
+
 - Public endpoint (`/api/check`, `/api/stolen`, `/b/{token}`, `/api/sightings`, `/api/riskmap`) returns or leaks owner data: name, email, address, FEIN code, exact home location.
 - FEIN code stored, logged or returned in plain text (must be HMAC hash only).
 - Uploaded image stored without EXIF stripping.
@@ -32,6 +35,7 @@ Use this when reviewing a diff or PR. This is a 36-hour hackathon project: optim
 - Partner or admin endpoint without role check.
 
 ### Correctness
+
 - Frame-number lookup does not use `FrameNumber` normalisation (exact then loose).
 - Async code without `await`, `.Result`/`.Wait()`, missing `CancellationToken` on DB calls in endpoints.
 - EF migrations missing for model changes, or migration edits that drop data.
@@ -39,6 +43,7 @@ Use this when reviewing a diff or PR. This is a 36-hour hackathon project: optim
 - Breaks the build, tests, or the running demo flow.
 
 ### Demo risk
+
 - New hard dependency on a network service without a Fake/offline fallback.
 - Preview/RC/beta package added.
 - Change touches many slices at once late in the event (after Sat 09:00).

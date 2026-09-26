@@ -20,7 +20,10 @@ docker compose -f infra/docker-compose.yml up -d --wait
 dotnet tool restore                          # installs dotnet-ef locally
 dotnet run --project api/LeezenPass.Api
 
-# 3. Web on http://localhost:5173 (proxies /api to the API)
+# 3. Demo data (users, ~200 bikes, 60 theft reports); re-run any time, see seed/README.md
+dotnet run --project api/LeezenPass.Api -- seed
+
+# 4. Web on http://localhost:5173 (proxies /api to the API)
 cd web && npm install && npm run dev
 ```
 
@@ -63,6 +66,7 @@ set `Vision__Provider=Fake` for canned suggestions without LM Studio. `Features:
 | API docs (dev) | http://localhost:5080/scalar |
 | Mail inbox (dev) | http://localhost:8025 |
 | MinIO console | http://localhost:9001 (see `infra/.env.example` for login) |
+| Reset demo data | `dotnet run --project api/LeezenPass.Api -- seed` |
 | Stop infra | `docker compose -f infra/docker-compose.yml down` |
 
 ## Layout

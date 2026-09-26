@@ -55,7 +55,7 @@ All from the repo root. Verified 2026-09-25.
 - Migration: `dotnet ef migrations add <Name> --project api/LeezenPass.Api --output-dir Infrastructure/Data/Migrations` · `dotnet ef database update --project api/LeezenPass.Api`
 - Web: `cd web && npm run dev` (http://localhost:5173, proxies `/api`) · `npm run build` · `npm run lint` (oxlint)
 - AI model (local): `~/.lmstudio/bin/lms server start` · `~/.lmstudio/bin/lms load qwen/qwen3-vl-8b --context-length 8192` (API: `http://localhost:1234/v1`; `Vision__Provider=Fake` for canned data)
-- Seed demo data: `<to be defined>`
+- Seed demo data: `dotnet run --project api/LeezenPass.Api -- seed` (DemoMode only; replaces all `*@demo.local` data, keeps other users; logins and check-demo numbers in `seed/README.md`)
 
 ## Architecture rules
 

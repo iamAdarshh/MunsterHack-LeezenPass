@@ -1,6 +1,7 @@
 using FastEndpoints;
 using FastEndpoints.Swagger;
 using LeezenPass.Api.Configurations;
+using LeezenPass.Api.Infrastructure.Seed;
 using QuestPDF.Infrastructure;
 
 QuestPDF.Settings.License = LicenseType.Community;
@@ -19,6 +20,13 @@ builder.Services.AddFastEndpoints()
                 .SwaggerDocument(o => o.ShortSchemaNames = true);
 
 var app = builder.Build();
+
+// `dotnet run --project api/LeezenPass.Api -- seed`: migrate, replace the demo data, exit (see seed/README.md).
+if (args.Contains("seed"))
+{
+  await app.SeedDemoDataAsync();
+  return;
+}
 
 await app.UseAppMiddlewareAndMigrateDatabase();
 

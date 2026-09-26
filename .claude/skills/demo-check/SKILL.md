@@ -12,7 +12,7 @@ Run a pre-pitch smoke test. Do not add features; only fix blockers you find, and
    - **A. Register with AI prefill**: log in as demo owner → upload photo → `/api/ai/extract` → register bike → download pass PDF.
    - **B. Check before you buy**: `/api/check` with a stolen demo frame number → `stolen` with photo; with a registered-only bike → `unknown` without data; with a mistyped (O↔0) number → `possible_match`.
    - **C. Theft → recovery**: report theft → appears in `/api/stolen` without owner data → (if built) sighting → owner sees match → mark recovered.
-   - **D. Transfer**: create code → claim as second demo user → certificate PDF + verify page.
+   - **D. Transfer**: create code → claim as second demo user → certificate PDF + verify page. After the claim, the previous owner's receipt photo is gone, the FEIN hash is empty, and the listing link `/b/{token}` shows the trust label and no owner data.
    - **E. Verify ownership**: receipt (`…pass.jpg`) → challenge → possession photo (`…pass.jpg`) → "Per Beleg geprüft"; wrong or expired code fails with a retry prompt.
    - **F. Check privacy**: registered clean bike → `unknown` with the same response shape as a random frame number; stolen bike → `stolen` with trust label; open transfer → `verified_transfer` with trust label.
    - **G. Duplicate protection**: second user registers the stolen demo frame number and a clean registered one → identical 409; stolen bike's owner gets an email in Mailpit.
