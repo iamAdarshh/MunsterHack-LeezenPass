@@ -4,6 +4,7 @@ import { ApiError } from '../../api/client'
 import { buttonClass } from '../../components/buttonClass'
 import { AlertIcon, ShieldIcon } from '../../components/icons'
 import { ErrorState, LoadingState } from '../../components/States'
+import { TrustBadge } from '../../components/TrustBadge'
 import { useStolenBike, useTag } from './api'
 import { CallPoliceBanner, StolenBikeCard } from './StolenBikeCard'
 
@@ -39,6 +40,7 @@ export function TagPage() {
           </p>
           <p className="text-sm">{t('tag.registeredBody')}</p>
           {tag.data.transferOpen && <p className="text-sm font-semibold">{t('tag.transferOpen')}</p>}
+          <TrustBadge level={tag.data.trustLevel} />
           <p className="text-sm">{t('tag.frameHint', { hint: tag.data.frameNumberHint })}</p>
         </div>
       )}

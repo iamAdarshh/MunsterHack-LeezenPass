@@ -22,7 +22,10 @@ public sealed record CheckRequest
 }
 
 /// <summary>Bikes only for stolen / possible_match (public data, district only). Otherwise just the status.</summary>
-public sealed record CheckResponse(LookupResult Result, IReadOnlyList<StolenBikeResponse> Bikes);
+/// <param name="Result">stolen | verified_transfer | possible_match | unknown.</param>
+/// <param name="Bikes">Public stolen view, only for stolen / possible_match.</param>
+/// <param name="TrustLevel">Only for stolen / verified_transfer: the bike the result is about. Never for a clean registered bike.</param>
+public sealed record CheckResponse(LookupResult Result, IReadOnlyList<StolenBikeResponse> Bikes, TrustLevel? TrustLevel);
 
 public class CheckValidator : Validator<CheckRequest>
 {
@@ -92,19 +95,24 @@ public class CheckEndpoint(
       .Select(b => new CheckCandidate(
         b.Id,
         b.Status == BikeStatus.Stolen,
-        db.OwnershipTransfers.Any(t => t.BikeId == b.Id && t.CompletedAt == null && t.ExpiresAt > now)))
+        db.OwnershipTransfers.Any(t => t.BikeId == b.Id && t.CompletedAt == null && t.ExpiresAt > now),
+        b.TrustLevel))
       .ToListAsync(ct);
 
-    // Loose key only against stolen bikes, and always (not only when nothing matched exactly).
+    // Loose key only against bikes the public may learn about (stolen or open transfer), and always (not only
+    // when nothing matched exactly), so a clean registered look-alike can't be told apart from an unregistered one.
     var exactIds = exact.Select(c => c.BikeId).ToList();
-    var looseStolenIds = looseKey is not null
+    var looseMatches = looseKey is not null
       ? await bikes
-        .Where(b => b.FrameNoLoose == looseKey && b.Status == BikeStatus.Stolen && !exactIds.Contains(b.Id))
-        .Select(b => b.Id)
+        .Where(b => b.FrameNoLoose == looseKey && !exactIds.Contains(b.Id))
+        .Where(b => b.Status == BikeStatus.Stolen
+          || db.OwnershipTransfers.Any(t => t.BikeId == b.Id && t.CompletedAt == null && t.ExpiresAt > now))
+        .Select(b => new { b.Id, IsStolen = b.Status == BikeStatus.Stolen })
         .ToListAsync(ct)
       : [];
+    var looseStolenIds = looseMatches.Where(m => m.IsStolen).Select(m => m.Id).ToList();
 
-    var result = CheckRules.Decide(exact, looseStolenIds.Count > 0);
+    var result = CheckRules.Decide(exact, looseMatches.Count > 0);
 
     IReadOnlyCollection<Guid> shownIds = result switch
     {
@@ -121,6 +129,6 @@ public class CheckEndpoint(
     await db.SaveChangesAsync(ct);
 
     HttpContext.Response.Headers.CacheControl = "no-store";
-    await Send.OkAsync(new CheckResponse(result, shown), ct);
+    await Send.OkAsync(new CheckResponse(result, shown, CheckRules.Disclosed(exact, result)?.TrustLevel), ct);
   }
 }

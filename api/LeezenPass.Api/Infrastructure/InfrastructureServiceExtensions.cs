@@ -33,6 +33,7 @@ public static class InfrastructureServiceExtensions
     services.AddSingleton<IPdfRenderer, QuestPdfRenderer>();
     services.AddSingleton<ImageProcessor>();
     services.AddScoped<DemoSeeder>();
+    services.AddSingleton<Features.Bikes.FrameConflicts>();
 
     // Local disk until a MinIO implementation is needed.
     services.AddSingleton<IFileStorage, LocalFileStorage>();

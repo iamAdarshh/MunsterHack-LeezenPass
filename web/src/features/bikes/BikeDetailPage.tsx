@@ -7,9 +7,11 @@ import { BackLink } from '../../components/BackLink'
 import { Button } from '../../components/Button'
 import { buttonClass } from '../../components/buttonClass'
 import { StatusBadge } from '../../components/StatusBadge'
+import { TrustBadge } from '../../components/TrustBadge'
 import { Alert, ErrorState, LoadingState } from '../../components/States'
 import { StolenPanel } from '../theft/StolenPanel'
 import { TransferPanel } from '../transfers/TransferPanel'
+import { VerifyOwnershipWizard } from '../verification/VerifyOwnershipWizard'
 import { useBike, useDeleteBike } from './api'
 import { Swatch } from './Swatch'
 import { bikeTitle } from './format'
@@ -51,7 +53,10 @@ function BikeDetail({ bike }: { bike: Bike }) {
           <h1 className="text-2xl font-bold break-words">{bikeTitle(bike, t)}</h1>
           <p className="font-mono text-slate-600">{bike.frameNumber}</p>
         </div>
-        <StatusBadge status={bike.status} />
+        <div className="flex shrink-0 flex-col items-end gap-1">
+          <StatusBadge status={bike.status} />
+          <TrustBadge level={bike.trustLevel} />
+        </div>
       </div>
 
       {justRegistered && (
@@ -98,6 +103,8 @@ function BikeDetail({ bike }: { bike: Bike }) {
           {bike.purchaseDate ? format.date(bike.purchaseDate) : '–'}
         </Row>
       </dl>
+
+      <VerifyOwnershipWizard bike={bike} />
 
       <TransferPanel bike={bike} />
 

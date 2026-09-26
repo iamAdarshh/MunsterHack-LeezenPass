@@ -66,6 +66,9 @@ public class Bike
 
   public void ClearFeinCode() => FeinCodeHash = null;
 
+  /// <summary>Once ownership is proven for this frame number, changing it would carry the label over to another bike.</summary>
+  public bool CanChangeFrameNumber => TrustLevel == TrustLevel.SelfDeclared;
+
   public bool CanReportStolen => Status != BikeStatus.Stolen;
 
   public bool CanMarkRecovered => Status == BikeStatus.Stolen;

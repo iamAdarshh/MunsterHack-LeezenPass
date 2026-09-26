@@ -48,6 +48,50 @@ public static class VisionPrompt
     };
   }
 
+  public const string ReceiptSystem =
+    "You read sales receipts for bicycles. Only report what is printed on the receipt. "
+    + "frame_number_candidate: the frame/serial number (Rahmennummer) exactly as printed, else empty string. "
+    + "brand, model: of the bicycle sold, else empty string. purchase_date: YYYY-MM-DD, else empty string. "
+    + "shop_name: the seller, else empty string. "
+    + "If it is not a bicycle receipt, leave the bicycle fields empty. "
+    + "confidence: 0-1, how sure you are that you read the receipt correctly (a clear non-bicycle receipt is still high).";
+
+  public const string ReceiptUser = "Read this receipt.";
+
+  public const string PossessionSystem =
+    "The photo should show a stamped bicycle frame number and, next to it, a handwritten or displayed 4-digit code. "
+    + "code_visible: true if a 4-digit code is clearly readable. code_value: the 4 digits, else empty string. "
+    + "frame_number_candidate: the stamped frame number exactly as shown, else empty string. "
+    + "confidence: 0-1, how sure you are about both readings.";
+
+  public const string PossessionUser = "Read the code and the frame number.";
+
+  public static JsonObject ReceiptSchema() => StrictObject(new JsonObject
+  {
+    ["frame_number_candidate"] = new JsonObject { ["type"] = "string" },
+    ["brand"] = new JsonObject { ["type"] = "string" },
+    ["model"] = new JsonObject { ["type"] = "string" },
+    ["purchase_date"] = new JsonObject { ["type"] = "string" },
+    ["shop_name"] = new JsonObject { ["type"] = "string" },
+    ["confidence"] = new JsonObject { ["type"] = "number", ["minimum"] = 0, ["maximum"] = 1 },
+  });
+
+  public static JsonObject PossessionSchema() => StrictObject(new JsonObject
+  {
+    ["code_visible"] = new JsonObject { ["type"] = "boolean" },
+    ["code_value"] = new JsonObject { ["type"] = "string" },
+    ["frame_number_candidate"] = new JsonObject { ["type"] = "string" },
+    ["confidence"] = new JsonObject { ["type"] = "number", ["minimum"] = 0, ["maximum"] = 1 },
+  });
+
+  private static JsonObject StrictObject(JsonObject properties) => new()
+  {
+    ["type"] = "object",
+    ["additionalProperties"] = false,
+    ["required"] = new JsonArray(properties.Select(p => (JsonNode)p.Key).ToArray()),
+    ["properties"] = properties,
+  };
+
   public static string TypeKey(BikeType type) => JsonNamingPolicy.SnakeCaseLower.ConvertName(type.ToString());
 }
 
@@ -58,5 +102,19 @@ public sealed record VisionModelOutput(
   [property: JsonPropertyName("color_secondary")] string? ColorSecondary,
   [property: JsonPropertyName("brand_guess")] string? BrandGuess,
   [property: JsonPropertyName("features")] List<string>? Features,
+  [property: JsonPropertyName("frame_number_candidate")] string? FrameNumberCandidate,
+  [property: JsonPropertyName("confidence")] double? Confidence);
+
+public sealed record ReceiptModelOutput(
+  [property: JsonPropertyName("frame_number_candidate")] string? FrameNumberCandidate,
+  [property: JsonPropertyName("brand")] string? Brand,
+  [property: JsonPropertyName("model")] string? Model,
+  [property: JsonPropertyName("purchase_date")] string? PurchaseDate,
+  [property: JsonPropertyName("shop_name")] string? ShopName,
+  [property: JsonPropertyName("confidence")] double? Confidence);
+
+public sealed record PossessionModelOutput(
+  [property: JsonPropertyName("code_visible")] bool? CodeVisible,
+  [property: JsonPropertyName("code_value")] string? CodeValue,
   [property: JsonPropertyName("frame_number_candidate")] string? FrameNumberCandidate,
   [property: JsonPropertyName("confidence")] double? Confidence);

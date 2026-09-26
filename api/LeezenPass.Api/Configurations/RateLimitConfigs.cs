@@ -18,6 +18,9 @@ public static class RateLimitPolicies
   /// <summary>Claiming transfer codes: 10 per 10 minutes per user (guessing 8-char codes must be hopeless).</summary>
   public const string Claim = "claim";
 
+  /// <summary>Possession challenge codes: 5 per hour per user (a fresh code per try must not make guessing cheap).</summary>
+  public const string Challenge = "challenge";
+
   /// <summary>Public frame number / FEIN check, per IP (SPEC: 10 per 10 min; configurable for rehearsals).</summary>
   public const string Check = "check";
 }
@@ -43,6 +46,7 @@ public static class RateLimitConfigs
       o.AddPolicy(RateLimitPolicies.BikeWrite, ctx => PerUser(ctx, 30, TimeSpan.FromHours(1)));
       o.AddPolicy(RateLimitPolicies.Ai, ctx => PerUser(ctx, 30, TimeSpan.FromHours(1)));
       o.AddPolicy(RateLimitPolicies.Claim, ctx => PerUser(ctx, 10, TimeSpan.FromMinutes(10)));
+      o.AddPolicy(RateLimitPolicies.Challenge, ctx => PerUser(ctx, 5, TimeSpan.FromHours(1)));
       o.AddPolicy(RateLimitPolicies.Check, ctx => RateLimitPartition.GetFixedWindowLimiter(
         ClientKey.For(ctx.Connection.RemoteIpAddress),
         _ => new FixedWindowRateLimiterOptions { PermitLimit = limits.CheckPerTenMinutes, Window = TimeSpan.FromMinutes(10) }));

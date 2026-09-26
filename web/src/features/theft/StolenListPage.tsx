@@ -11,6 +11,7 @@ import {
   districts,
 } from '../../api/types'
 import { inputClass } from '../../components/FormField'
+import { TrustBadge } from '../../components/TrustBadge'
 import { BikeIcon } from '../../components/icons'
 import { ErrorState, LoadingState } from '../../components/States'
 import { Swatch } from '../bikes/Swatch'
@@ -128,10 +129,11 @@ function StolenRow({ bike }: { bike: StolenBike }) {
         <p className="text-sm text-slate-600">
           {t(`district.${bike.district}`)} · {format.date(bike.stolenOn)}
         </p>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {bike.colorPrimary && <Swatch color={bike.colorPrimary} className="size-4" />}
           {bike.colorSecondary && <Swatch color={bike.colorSecondary} className="size-4" />}
           <ReportBadge policeReported={bike.policeReported} />
+          <TrustBadge level={bike.trustLevel} />
         </div>
       </div>
     </Link>

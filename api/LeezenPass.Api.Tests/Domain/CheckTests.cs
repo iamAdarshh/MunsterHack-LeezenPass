@@ -12,7 +12,7 @@ public class CheckTests
   [Fact]
   public void Exact_stolen_match_is_stolen()
   {
-    Assert.Equal(LookupResult.Stolen, CheckRules.Decide([Bike(stolen: true)], looseStolenMatch: false));
+    Assert.Equal(LookupResult.Stolen, CheckRules.Decide([Bike(stolen: true)], looseMatch: false));
   }
 
   [Fact]
@@ -31,33 +31,33 @@ public class CheckTests
   [Fact]
   public void Registered_clean_bike_is_reported_as_unknown()
   {
-    Assert.Equal(LookupResult.Unknown, CheckRules.Decide([Bike()], looseStolenMatch: false));
+    Assert.Equal(LookupResult.Unknown, CheckRules.Decide([Bike()], looseMatch: false));
   }
 
   [Fact]
   public void Clean_exact_match_does_not_hide_a_loose_stolen_match()
   {
     // Otherwise the answer would reveal which variants of a stolen frame number are registered.
-    Assert.Equal(LookupResult.PossibleMatch, CheckRules.Decide([Bike()], looseStolenMatch: true));
+    Assert.Equal(LookupResult.PossibleMatch, CheckRules.Decide([Bike()], looseMatch: true));
   }
 
   [Fact]
   public void Exact_stolen_or_transfer_beats_a_loose_match()
   {
-    Assert.Equal(LookupResult.Stolen, CheckRules.Decide([Bike(stolen: true)], looseStolenMatch: true));
-    Assert.Equal(LookupResult.VerifiedTransfer, CheckRules.Decide([Bike(transfer: true)], looseStolenMatch: true));
+    Assert.Equal(LookupResult.Stolen, CheckRules.Decide([Bike(stolen: true)], looseMatch: true));
+    Assert.Equal(LookupResult.VerifiedTransfer, CheckRules.Decide([Bike(transfer: true)], looseMatch: true));
   }
 
   [Fact]
   public void Loose_match_on_a_stolen_bike_is_possible_match()
   {
-    Assert.Equal(LookupResult.PossibleMatch, CheckRules.Decide([], looseStolenMatch: true));
+    Assert.Equal(LookupResult.PossibleMatch, CheckRules.Decide([], looseMatch: true));
   }
 
   [Fact]
   public void Nothing_found_is_unknown()
   {
-    Assert.Equal(LookupResult.Unknown, CheckRules.Decide([], looseStolenMatch: false));
+    Assert.Equal(LookupResult.Unknown, CheckRules.Decide([], looseMatch: false));
   }
 
   [Fact]
@@ -93,5 +93,18 @@ public class CheckTests
   public void Client_key_groups_ipv6_by_64_prefix(string address, string expected)
   {
     Assert.Equal(expected, LeezenPass.Api.Infrastructure.ClientKey.For(System.Net.IPAddress.Parse(address)));
+  }
+
+  [Fact]
+  public void Trust_level_is_disclosed_only_for_stolen_and_verified_transfer()
+  {
+    var stolen = new CheckCandidate(Guid.NewGuid(), IsStolen: true, HasOpenTransfer: false, LeezenPass.Api.Domain.Bikes.TrustLevel.EvidenceChecked);
+    var forSale = new CheckCandidate(Guid.NewGuid(), IsStolen: false, HasOpenTransfer: true, LeezenPass.Api.Domain.Bikes.TrustLevel.ThirdPartyVerified);
+    var clean = new CheckCandidate(Guid.NewGuid(), IsStolen: false, HasOpenTransfer: false, LeezenPass.Api.Domain.Bikes.TrustLevel.EvidenceChecked);
+
+    Assert.Same(stolen, CheckRules.Disclosed([stolen], LookupResult.Stolen));
+    Assert.Same(forSale, CheckRules.Disclosed([forSale], LookupResult.VerifiedTransfer));
+    Assert.Null(CheckRules.Disclosed([clean], LookupResult.Unknown));
+    Assert.Null(CheckRules.Disclosed([clean], LookupResult.PossibleMatch));
   }
 }

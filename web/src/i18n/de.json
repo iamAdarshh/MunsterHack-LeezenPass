@@ -39,7 +39,9 @@
       },
       "possible_match": {
         "title": "Ähnliches gestohlenes Rad gefunden",
-        "body": "Die Nummer ähnelt der eines gestohlenen Rads (z. B. O statt 0). Vergleiche Nummer und Fotos genau mit dem Rad vor dir."
+        "body": "Die Nummer ähnelt der eines gestohlenen Rads (z. B. O statt 0). Vergleiche Nummer und Fotos genau mit dem Rad vor dir.",
+        "similarTitle": "Ähnliche Nummer – kein Diebstahl bekannt",
+        "similarBody": "Eine sehr ähnliche Rahmennummer gehört zu einem Rad, für das gerade eine Übergabe vorbereitet ist. Vergleiche die Nummer am Rad Zeichen für Zeichen (0/O, 1/I, 8/B) und prüf sie noch einmal."
       },
       "verified_transfer": {
         "title": "Sichere Übergabe vorbereitet",
@@ -229,7 +231,7 @@
     "invalidValue": "Ungültiger Wert.",
     "emailInvalid": "Bitte gib eine gültige E-Mail-Adresse ein.",
     "frameNumberInvalid": "Die Rahmennummer braucht 4–32 Buchstaben oder Ziffern.",
-    "frameNumberTaken": "Diese Rahmennummer ist bereits registriert. Falls es dein Rad ist, lass es dir vom Vorbesitzer übertragen.",
+    "frameNumberTaken": "Diese Rahmennummer ist bereits vergeben. Falls es dein Rad ist, lass es dir vom Vorbesitz übertragen.",
     "feinCodeInvalid": "Der FEIN-Code braucht 6–32 Buchstaben oder Ziffern.",
     "dateInFuture": "Das Datum liegt in der Zukunft.",
     "fileTooLarge": "Das Foto ist zu groß (max. 15 MB).",
@@ -247,7 +249,9 @@
     "concurrentChange": "Das wurde gerade gleichzeitig geändert. Bitte lade die Seite neu.",
     "checkInput": "Bitte Rahmennummer oder FEIN-Code eingeben.",
     "captchaFailed": "Sicherheitsprüfung fehlgeschlagen. Bitte noch einmal versuchen.",
-    "checkFailed": "Prüfung fehlgeschlagen. Bitte noch einmal versuchen."
+    "checkFailed": "Prüfung fehlgeschlagen. Bitte noch einmal versuchen.",
+    "challengeInvalid": "Der Code ist falsch oder abgelaufen. Lass dir einen neuen anzeigen.",
+    "frameNumberLocked": "Die Rahmennummer ist per Beleg geprüft und kann nicht mehr geändert werden."
   },
   "reportTheft": {
     "title": "Diebstahl melden",
@@ -399,5 +403,34 @@
     "stolenNow": "Dieses Rad ist aktuell als gestohlen gemeldet. Gesehen? Ruf 110 an.",
     "notFoundTitle": "Nachweis nicht gefunden",
     "notFoundBody": "Diesen Eigentumsnachweis gibt es bei LeezenPass nicht. Er könnte gefälscht sein."
+  },
+  "trust": {
+    "level": {
+      "self_declared": "Selbst angegeben",
+      "evidence_checked": "Per Beleg geprüft",
+      "third_party_verified": "Von Partner bestätigt"
+    },
+    "hint": {
+      "self_declared": "Die Angaben stammen von der Besitzerin oder dem Besitzer selbst.",
+      "evidence_checked": "Kaufbeleg und Rad mit Rahmennummer wurden geprüft.",
+      "third_party_verified": "Von einem Fahrradladen oder ADFC-Codieraktion registriert oder von einem geprüften Vorbesitz übernommen."
+    },
+    "checkLabel": "Eigentum:"
+  },
+  "ownership": {
+    "title": "Eigentum nachweisen",
+    "intro": "Mit Kaufbeleg und einem Foto deines Rads wird aus „Selbst angegeben“ „Per Beleg geprüft“. Käufer:innen sehen das bei der Prüfung und in deinem Verkaufslink.",
+    "receiptTitle": "Kaufbeleg fotografieren",
+    "receiptHint": "Rechnung oder Kaufvertrag mit Rahmennummer, oder Marke, Modell und Datum. Der Beleg bleibt privat und wird bei einer Übergabe gelöscht.",
+    "possessionTitle": "Rad mit Code fotografieren",
+    "showCode": "Code anzeigen",
+    "codeValidFor": "gültig noch {{time}}",
+    "possessionHint": "Schreib den Code auf einen Zettel, leg ihn neben die Rahmennummer und fotografiere beides zusammen. Dieses Foto wird nicht gespeichert.",
+    "codeExpired": "Der Code ist abgelaufen. Lass dir einen neuen anzeigen.",
+    "checking": "Wird geprüft …",
+    "retry": "Das Foto ist nicht deutlich genug. Bitte nimm ein neues Foto auf, mit gutem Licht und ohne Spiegelung.",
+    "receiptFailed": "Dieser Beleg passt nicht zu diesem Rad: Weder die Rahmennummer noch Marke, Modell und Kaufdatum stimmen überein.",
+    "possessionFailed": "Das passt nicht: Code oder Rahmennummer stimmen nicht. Prüfe beides und versuch es noch einmal.",
+    "aiUnavailable": "Die Prüfung ist gerade nicht möglich. Bitte versuch es gleich noch einmal."
   }
 }

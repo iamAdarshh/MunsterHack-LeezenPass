@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 import type { StolenBike } from '../../api/types'
 import { AlertIcon, CheckIcon } from '../../components/icons'
 import { Swatch } from '../bikes/Swatch'
+import { TrustBadge } from '../../components/TrustBadge'
 import { stolenTitle } from './format'
 import { useFormat } from '../../i18n/useFormat'
 
@@ -30,8 +31,11 @@ export function CallPoliceBanner() {
   )
 }
 
-/** Full card for one stolen bike: the public share card and the QR tag page. */
-export function StolenBikeCard({ bike }: { bike: StolenBike }) {
+/**
+ * Full card for one stolen bike: the public share card and the QR tag page.
+ * `showTrust` is off for possible_match check results (trust labels only for stolen / verified_transfer).
+ */
+export function StolenBikeCard({ bike, showTrust = true }: { bike: StolenBike; showTrust?: boolean }) {
   const { t } = useTranslation()
   const format = useFormat()
   const colors = [bike.colorPrimary, bike.colorSecondary].filter((c) => c !== null)
@@ -64,7 +68,10 @@ export function StolenBikeCard({ bike }: { bike: StolenBike }) {
             })}
           </p>
         </div>
-        <ReportBadge policeReported={bike.policeReported} />
+        <div className="flex flex-wrap gap-2">
+          <ReportBadge policeReported={bike.policeReported} />
+          {showTrust && <TrustBadge level={bike.trustLevel} />}
+        </div>
         <dl className="grid grid-cols-[7rem_1fr] gap-x-3 gap-y-2 text-sm">
           <dt className="text-slate-500">{t('bikeForm.type')}</dt>
           <dd>{t(`bikeType.${bike.type}`)}{bike.isEbike ? ` · ${t('bikeForm.isEbike')}` : ''}</dd>

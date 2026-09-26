@@ -1,6 +1,7 @@
 using System.Net.Http.Headers;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using LeezenPass.Api.Domain.Verification;
 using Microsoft.Extensions.Options;
 
 namespace LeezenPass.Api.Infrastructure.Vision;
@@ -22,6 +23,40 @@ public class OpenAiCompatibleVisionExtractor(
 
   public async Task<VisionSuggestion> ExtractAsync(Stream image, string contentType, CancellationToken ct)
   {
+    var output = await CompleteAsync<VisionModelOutput>(
+      image, contentType, VisionPrompt.System, VisionPrompt.User, "bike", VisionPrompt.Schema(), ct);
+    return VisionResponseMapper.Map(output);
+  }
+
+  public async Task<ReceiptReading> ExtractReceiptAsync(Stream image, string contentType, VerificationHint hint, CancellationToken ct)
+  {
+    var output = await CompleteAsync<ReceiptModelOutput>(
+      image, contentType, VisionPrompt.ReceiptSystem, VisionPrompt.ReceiptUser, "receipt", VisionPrompt.ReceiptSchema(), ct);
+    return new ReceiptReading(
+      Blank(output.FrameNumberCandidate),
+      Blank(output.Brand),
+      Blank(output.Model),
+      DateOnly.TryParseExact(output.PurchaseDate, "yyyy-MM-dd", out var date) ? date : null,
+      Math.Clamp(output.Confidence ?? 0, 0, 1));
+  }
+
+  public async Task<PossessionReading> CheckPossessionAsync(Stream image, string contentType, VerificationHint hint, CancellationToken ct)
+  {
+    var output = await CompleteAsync<PossessionModelOutput>(
+      image, contentType, VisionPrompt.PossessionSystem, VisionPrompt.PossessionUser, "possession", VisionPrompt.PossessionSchema(), ct);
+    return new PossessionReading(
+      output.CodeVisible ?? false,
+      Blank(output.CodeValue),
+      Blank(output.FrameNumberCandidate),
+      Math.Clamp(output.Confidence ?? 0, 0, 1));
+  }
+
+  private static string? Blank(string? value) => string.IsNullOrWhiteSpace(value) ? null : value.Trim();
+
+  /// <summary>One image + prompt → strict JSON of <typeparamref name="T"/>. Gate, timeout and error mapping shared by all calls.</summary>
+  private async Task<T> CompleteAsync<T>(
+    Stream image, string contentType, string system, string user, string schemaName, JsonObject schema, CancellationToken ct)
+  {
     using var buffer = new MemoryStream();
     await image.CopyToAsync(buffer, ct);
     var dataUrl = $"data:{contentType};base64,{Convert.ToBase64String(buffer.ToArray())}";
@@ -33,13 +68,13 @@ public class OpenAiCompatibleVisionExtractor(
       ["max_tokens"] = 300,
       ["messages"] = new JsonArray
       {
-        new JsonObject { ["role"] = "system", ["content"] = VisionPrompt.System },
+        new JsonObject { ["role"] = "system", ["content"] = system },
         new JsonObject
         {
           ["role"] = "user",
           ["content"] = new JsonArray
           {
-            new JsonObject { ["type"] = "text", ["text"] = VisionPrompt.User },
+            new JsonObject { ["type"] = "text", ["text"] = user },
             new JsonObject { ["type"] = "image_url", ["image_url"] = new JsonObject { ["url"] = dataUrl } },
           },
         },
@@ -47,7 +82,7 @@ public class OpenAiCompatibleVisionExtractor(
       ["response_format"] = new JsonObject
       {
         ["type"] = "json_schema",
-        ["json_schema"] = new JsonObject { ["name"] = "bike", ["strict"] = true, ["schema"] = VisionPrompt.Schema() },
+        ["json_schema"] = new JsonObject { ["name"] = schemaName, ["strict"] = true, ["schema"] = schema },
       },
     };
 
@@ -72,9 +107,8 @@ public class OpenAiCompatibleVisionExtractor(
       var content = completion?["choices"]?[0]?["message"]?["content"]?.GetValue<string>()
         ?? throw new VisionUnavailableException("Vision API returned no content.");
 
-      var output = JsonSerializer.Deserialize<VisionModelOutput>(content)
+      return JsonSerializer.Deserialize<T>(content)
         ?? throw new VisionUnavailableException("Vision API returned empty JSON.");
-      return VisionResponseMapper.Map(output);
     }
     catch (OperationCanceledException ex) when (!ct.IsCancellationRequested)
     {

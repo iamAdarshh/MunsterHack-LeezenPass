@@ -1,8 +1,9 @@
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router'
-import type { CheckResponse } from '../../api/types'
+import type { CheckResponse, TrustLevel } from '../../api/types'
 import { buttonClass } from '../../components/buttonClass'
+import { TrustBadge } from '../../components/TrustBadge'
 import { AlertIcon, CheckIcon, SearchIcon, ShieldIcon } from '../../components/icons'
 import { CallPoliceBanner, StolenBikeCard } from '../theft/StolenBikeCard'
 
@@ -28,11 +29,18 @@ export function CheckResultView({ response }: { response: CheckResponse }) {
     case 'possible_match':
       return (
         <div className="space-y-4">
-          <Banner tone="amber" icon={<SearchIcon className="size-6" />} title={t('check.result.possible_match.title')}>
-            {t('check.result.possible_match.body')}
-          </Banner>
+          {response.bikes.length > 0 ? (
+            <Banner tone="amber" icon={<SearchIcon className="size-6" />} title={t('check.result.possible_match.title')}>
+              {t('check.result.possible_match.body')}
+            </Banner>
+          ) : (
+            // Look-alike of a bike with an open handover, not of a stolen one: no photos, neutral wording.
+            <Banner tone="amber" icon={<SearchIcon className="size-6" />} title={t('check.result.possible_match.similarTitle')}>
+              {t('check.result.possible_match.similarBody')}
+            </Banner>
+          )}
           {response.bikes.map((bike) => (
-            <StolenBikeCard key={bike.token} bike={bike} />
+            <StolenBikeCard key={bike.token} bike={bike} showTrust={false} />
           ))}
         </div>
       )
@@ -42,6 +50,7 @@ export function CheckResultView({ response }: { response: CheckResponse }) {
           <Banner tone="green" icon={<ShieldIcon className="size-6" />} title={t('check.result.verified_transfer.title')}>
             {t('check.result.verified_transfer.body')}
           </Banner>
+          {response.trustLevel && <TrustLine level={response.trustLevel} />}
           <Link to="/claim" className={buttonClass('secondary', true)}>
             {t('claim.link')}
           </Link>
@@ -79,6 +88,15 @@ const tones = {
   green: 'border-emerald-300 bg-emerald-50 text-emerald-950',
   grey: 'border-slate-300 bg-slate-100 text-slate-900',
 } as const
+
+function TrustLine({ level }: { level: TrustLevel }) {
+  const { t } = useTranslation()
+  return (
+    <p className="flex flex-wrap items-center gap-2 text-sm text-slate-700">
+      {t('trust.checkLabel')} <TrustBadge level={level} />
+    </p>
+  )
+}
 
 function Banner(props: { tone: keyof typeof tones; icon: ReactNode; title: string; children: ReactNode }) {
   return (

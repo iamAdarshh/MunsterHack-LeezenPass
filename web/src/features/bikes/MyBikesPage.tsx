@@ -4,6 +4,7 @@ import type { Bike } from '../../api/types'
 import { buttonClass } from '../../components/buttonClass'
 import { BikeIcon, PlusIcon } from '../../components/icons'
 import { StatusBadge } from '../../components/StatusBadge'
+import { TrustBadge } from '../../components/TrustBadge'
 import { ErrorState, LoadingState } from '../../components/States'
 import { useMyBikes } from './api'
 import { Swatch } from './Swatch'
@@ -83,8 +84,9 @@ function BikeCard({ bike }: { bike: Bike }) {
       <div className="min-w-0 flex-1">
         <p className="truncate font-semibold">{bikeTitle(bike, t)}</p>
         <p className="truncate font-mono text-sm text-slate-600">{bike.frameNumber}</p>
-        <div className="mt-2 flex items-center gap-2">
+        <div className="mt-2 flex flex-wrap items-center gap-2">
           <StatusBadge status={bike.status} />
+          <TrustBadge level={bike.trustLevel} />
           {bike.colorPrimary && <Swatch color={bike.colorPrimary} className="size-4" />}
           <span className="text-xs text-slate-500">{t(`bikeType.${bike.type}`)}</span>
         </div>

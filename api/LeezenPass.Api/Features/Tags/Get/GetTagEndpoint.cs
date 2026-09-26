@@ -15,7 +15,7 @@ public sealed record GetTagRequest
 /// "registered" or "stolen", whether the owner has prepared a handover (open transfer code), and the
 /// frame number hint to compare with the bike. No attributes, no owner data.
 /// </summary>
-public sealed record TagResponse(string Status, bool TransferOpen, string FrameNumberHint);
+public sealed record TagResponse(string Status, bool TransferOpen, string FrameNumberHint, TrustLevel TrustLevel);
 
 /// <summary>
 /// Data for the QR tag page (/b/{token}). 404 for unknown tokens, so a fake QR code sticker
@@ -39,6 +39,7 @@ public class GetTagEndpoint(AppDbContext db, IClock clock) : Endpoint<GetTagRequ
       {
         b.Status,
         b.FrameNoNorm,
+        b.TrustLevel,
         TransferOpen = db.OwnershipTransfers.Any(t => t.BikeId == b.Id && t.CompletedAt == null && t.ExpiresAt > now),
       })
       .FirstOrDefaultAsync(ct);
@@ -50,6 +51,6 @@ public class GetTagEndpoint(AppDbContext db, IClock clock) : Endpoint<GetTagRequ
     }
 
     var stolen = bike.Status == BikeStatus.Stolen;
-    await Send.OkAsync(new TagResponse(stolen ? "stolen" : "registered", !stolen && bike.TransferOpen, FrameNumber.Hint(bike.FrameNoNorm)), ct);
+    await Send.OkAsync(new TagResponse(stolen ? "stolen" : "registered", !stolen && bike.TransferOpen, FrameNumber.Hint(bike.FrameNoNorm), bike.TrustLevel), ct);
   }
 }

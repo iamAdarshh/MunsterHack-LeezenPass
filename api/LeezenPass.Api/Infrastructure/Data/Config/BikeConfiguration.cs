@@ -37,6 +37,7 @@ public class BikeConfiguration : IEntityTypeConfiguration<Bike>
     builder.Ignore(b => b.CanReportStolen);
     builder.Ignore(b => b.CanMarkRecovered);
     builder.Ignore(b => b.CanTransfer);
+    builder.Ignore(b => b.CanChangeFrameNumber);
     builder.HasMany(b => b.Photos).WithOne().HasForeignKey(p => p.BikeId).OnDelete(DeleteBehavior.Cascade);
   }
 }

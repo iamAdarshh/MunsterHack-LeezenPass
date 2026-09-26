@@ -2,6 +2,7 @@ using LeezenPass.Api.Domain.Bikes;
 using LeezenPass.Api.Domain.Lookups;
 using LeezenPass.Api.Domain.Theft;
 using LeezenPass.Api.Domain.Transfers;
+using LeezenPass.Api.Domain.Verification;
 using LeezenPass.Api.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -18,6 +19,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
   public DbSet<TheftReport> TheftReports => Set<TheftReport>();
   public DbSet<OwnershipTransfer> OwnershipTransfers => Set<OwnershipTransfer>();
   public DbSet<Lookup> Lookups => Set<Lookup>();
+  public DbSet<PossessionChallenge> PossessionChallenges => Set<PossessionChallenge>();
+  public DbSet<OwnershipEvidence> OwnershipEvidence => Set<OwnershipEvidence>();
 
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {
@@ -43,6 +46,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     modelBuilder.Entity<TheftReport>().Property(e => e.Id).ValueGeneratedNever();
     modelBuilder.Entity<OwnershipTransfer>().Property(e => e.Id).ValueGeneratedNever();
     modelBuilder.Entity<Lookup>().Property(e => e.Id).ValueGeneratedNever();
+    modelBuilder.Entity<PossessionChallenge>().Property(e => e.Id).ValueGeneratedNever();
+    modelBuilder.Entity<OwnershipEvidence>().Property(e => e.Id).ValueGeneratedNever();
   }
 
   protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
@@ -56,5 +61,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> options)
     configurationBuilder.Properties<LookupResult>().HaveConversion<string>().HaveMaxLength(20);
     configurationBuilder.Properties<TrustLevel>().HaveConversion<string>().HaveMaxLength(20);
     configurationBuilder.Properties<TrustSource>().HaveConversion<string>().HaveMaxLength(20);
+    configurationBuilder.Properties<EvidenceKind>().HaveConversion<string>().HaveMaxLength(20);
+    configurationBuilder.Properties<EvidenceStatus>().HaveConversion<string>().HaveMaxLength(20);
   }
 }

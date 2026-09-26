@@ -20,6 +20,7 @@ public sealed record StolenBikeResponse(
   DateOnly StolenOn,
   string District,
   bool PoliceReported,
+  TrustLevel TrustLevel,
   IReadOnlyList<PublicPhotoResponse> Photos);
 
 public sealed record PublicPhotoResponse(Guid Id, PhotoKind Kind, string Url, string ThumbnailUrl);
@@ -37,6 +38,7 @@ public sealed record StolenBikeRow(
   DateTimeOffset StolenAt,
   string District,
   bool PoliceReported,
+  TrustLevel TrustLevel,
   List<PublicPhotoRow> Photos)
 {
   private static readonly TimeZoneInfo Berlin = TimeZoneInfo.FindSystemTimeZoneById("Europe/Berlin");
@@ -46,6 +48,7 @@ public sealed record StolenBikeRow(
     DateOnly.FromDateTime(TimeZoneInfo.ConvertTime(StolenAt, Berlin).DateTime),
     District,
     PoliceReported,
+    TrustLevel,
     Photos.Select(p =>
     {
       var url = $"/api/stolen/{Token}/photos/{p.Id}";
@@ -112,6 +115,7 @@ public static class StolenBikeQueries
         x.t.StolenAt,
         x.t.District,
         x.t.PoliceCaseNo != null,
+        x.b.TrustLevel,
         x.b.Photos
           .Where(p => PublicPhotoKinds.Contains(p.Kind))
           .OrderBy(p => p.CreatedAt)

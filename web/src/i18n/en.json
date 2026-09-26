@@ -39,7 +39,9 @@
       },
       "possible_match": {
         "title": "Similar stolen bike found",
-        "body": "The number is similar to a stolen bike's (e.g. O instead of 0). Compare number and photos carefully with the bike in front of you."
+        "body": "The number is similar to a stolen bike's (e.g. O instead of 0). Compare number and photos carefully with the bike in front of you.",
+        "similarTitle": "Similar number – no theft known",
+        "similarBody": "A very similar frame number belongs to a bike with a prepared handover. Compare the number on the bike character by character (0/O, 1/I, 8/B) and check again."
       },
       "verified_transfer": {
         "title": "Safe handover prepared",
@@ -229,7 +231,7 @@
     "invalidValue": "Invalid value.",
     "emailInvalid": "Please enter a valid email address.",
     "frameNumberInvalid": "The frame number needs 4–32 letters or digits.",
-    "frameNumberTaken": "This frame number is already registered. If it's your bike, ask the previous owner to transfer it.",
+    "frameNumberTaken": "This frame number is already taken. If it's your bike, ask the previous owner to transfer it.",
     "feinCodeInvalid": "The FEIN code needs 6–32 letters or digits.",
     "dateInFuture": "The date is in the future.",
     "fileTooLarge": "The photo is too large (max. 15 MB).",
@@ -247,7 +249,9 @@
     "concurrentChange": "This was just changed at the same time. Please reload the page.",
     "checkInput": "Please enter a frame number or FEIN code.",
     "captchaFailed": "Security check failed. Please try again.",
-    "checkFailed": "Check failed. Please try again."
+    "checkFailed": "Check failed. Please try again.",
+    "challengeInvalid": "The code is wrong or has expired. Show a new one.",
+    "frameNumberLocked": "The frame number has been checked with a receipt and can no longer be changed."
   },
   "reportTheft": {
     "title": "Report theft",
@@ -399,5 +403,34 @@
     "stolenNow": "This bike is currently reported stolen. Seen it? Call 110.",
     "notFoundTitle": "Certificate not found",
     "notFoundBody": "This ownership certificate does not exist at LeezenPass. It may be forged."
+  },
+  "trust": {
+    "level": {
+      "self_declared": "Self-declared",
+      "evidence_checked": "Checked with receipt",
+      "third_party_verified": "Confirmed by partner"
+    },
+    "hint": {
+      "self_declared": "The details come from the owner.",
+      "evidence_checked": "Receipt and the bike with its frame number were checked.",
+      "third_party_verified": "Registered by a bike shop or ADFC coding event, or taken over from a checked previous owner."
+    },
+    "checkLabel": "Ownership:"
+  },
+  "ownership": {
+    "title": "Prove ownership",
+    "intro": "A receipt and a photo of your bike turn “Self-declared” into “Checked with receipt”. Buyers see this in the check and in your listing link.",
+    "receiptTitle": "Photograph the receipt",
+    "receiptHint": "Invoice or sales contract with the frame number, or brand, model and date. The receipt stays private and is deleted on a handover.",
+    "possessionTitle": "Photograph the bike with a code",
+    "showCode": "Show code",
+    "codeValidFor": "valid for {{time}}",
+    "possessionHint": "Write the code on a piece of paper, put it next to the frame number and take one photo of both. This photo is not stored.",
+    "codeExpired": "The code has expired. Show a new one.",
+    "checking": "Checking …",
+    "retry": "The photo isn't clear enough. Please take a new one, with good light and no glare.",
+    "receiptFailed": "This receipt doesn't match this bike: neither the frame number nor brand, model and purchase date match.",
+    "possessionFailed": "That doesn't match: the code or the frame number is different. Check both and try again.",
+    "aiUnavailable": "The check isn't possible right now. Please try again in a moment."
   }
 }

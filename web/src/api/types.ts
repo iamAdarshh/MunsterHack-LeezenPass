@@ -76,6 +76,9 @@ export interface TheftInput {
 }
 
 /** Public view: no owner data, no frame number, district and date only. */
+/** SPEC feature 5. Shown to the owner, on the stolen list, and in check results for stolen / verified_transfer only. */
+export type TrustLevel = 'self_declared' | 'evidence_checked' | 'third_party_verified'
+
 export interface StolenBike {
   token: string
   type: BikeType
@@ -88,6 +91,7 @@ export interface StolenBike {
   stolenOn: string
   district: District
   policeReported: boolean
+  trustLevel: TrustLevel
   photos: BikePhoto[]
 }
 
@@ -107,6 +111,7 @@ export interface Bike {
   features: BikeFeature[]
   purchaseDate: string | null
   status: BikeStatus
+  trustLevel: TrustLevel
   hasFeinCode: boolean
   createdAt: string
   photos: BikePhoto[]
@@ -175,6 +180,7 @@ export interface TagStatus {
   status: 'registered' | 'stolen'
   transferOpen: boolean
   frameNumberHint: string
+  trustLevel: TrustLevel
 }
 
 export type CheckResult = 'stolen' | 'verified_transfer' | 'possible_match' | 'unknown'
@@ -183,4 +189,28 @@ export type CheckResult = 'stolen' | 'verified_transfer' | 'possible_match' | 'u
 export interface CheckResponse {
   result: CheckResult
   bikes: StolenBike[]
+  /** Only for stolen / verified_transfer; never for a clean registered bike. */
+  trustLevel: TrustLevel | null
+}
+
+export type EvidenceStatus = 'passed' | 'failed'
+
+/** GET /api/bikes/{id}/verification (owner). */
+export interface VerificationStatus {
+  trustLevel: TrustLevel
+  receipt: EvidenceStatus | null
+  possession: EvidenceStatus | null
+  challengeExpiresAt: string | null
+}
+
+/** retry = photo unclear, take a new one (not a failure). */
+export interface VerificationResult {
+  outcome: 'passed' | 'failed' | 'retry'
+  status: VerificationStatus
+}
+
+/** The plain code only exists in this response. */
+export interface PossessionChallenge {
+  code: string
+  expiresAt: string
 }
