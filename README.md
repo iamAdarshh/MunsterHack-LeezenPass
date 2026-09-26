@@ -32,6 +32,43 @@ Open http://localhost:5173. On a phone in the same Wi-Fi: `npm run dev -- --host
 Dev config lives in `api/LeezenPass.Api/appsettings.Development.json` (fakes on, demo mode on, dev-only secrets).
 Every config key is documented in [infra/.env.example](infra/.env.example).
 
+## Login accounts
+
+All accounts are **local development / demo accounts** with made-up data. They only exist while
+`Features:DemoMode=true`; never reuse these passwords anywhere real.
+
+### Seeded demo accounts (every machine, after `-- seed`)
+
+Password for all: **`LeezenDemo2026`**
+
+| Email | Role | What it's for |
+| --- | --- | --- |
+| `owner@demo.local` | – (owner) | Main demo account: Gazelle (stolen), Kalkhoff (open transfer, code `PASS-2345`), Stevens (clean, for the ownership check). 60 goodwill points |
+| `buyer@demo.local` | – (buyer) | Claims the Kalkhoff with `PASS-2345`, or the partner bike. Starts with no bikes and 0 points |
+| `partner@demo.local` | **Partner** | Bike shop. Owns a Riese & Müller e-bike (`Von Partner bestätigt`); hand it over with a transfer code and the customer gets +10 points |
+| `admin@demo.local` | **Admin** | Role exists; there are no admin screens yet (dispute resolution was cut) |
+| `nutzer01@demo.local` … `nutzer40@demo.local` | – | Background users who own the other ~190 bikes |
+
+The seed recreates these accounts every time it runs, so data you change with them resets on the next seed.
+Frame numbers and codes for the check demo are in [seed/README.md](seed/README.md).
+
+### Accounts created by hand during development (this machine's database only)
+
+These are not seeded. A fresh database won't have them, and the seed doesn't touch them.
+
+| Email | Password | Role | Notes |
+| --- | --- | --- | --- |
+| `demo@leezenpass.local` | `Demo1234!` | – | First test account |
+| `owner1@leezenpass.local` | `Demo1234` | – | 1 bike |
+| `owner2@leezenpass.local` | `Demo1234` | – | 1 bike |
+| `owner3@leezenpass.local` | `Demo1234` | – | 1 bike |
+| `claude-test@leezenpass.local` | `Test1234` | – | Claude Code test account, no bikes; safe to delete |
+| `claude-buyer@leezenpass.local` | `Test1234` | – | Claude Code test account, no bikes; safe to delete |
+| `claude-third@leezenpass.local` | `Test1234` | – | Claude Code test account, no bikes; safe to delete |
+
+New accounts: register in the app (Login tab → "Konto erstellen"). Passwords need 8+ characters with upper case, lower case
+and a digit. Roles can only be assigned by the seed (or directly in the `user_roles` table).
+
 ## AI photo prefill (LM Studio)
 
 The Register page can suggest type, colours, brand and frame number from photos. In development this uses
