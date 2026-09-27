@@ -1,15 +1,73 @@
 # LeezenPass
 
-Digital bike pass for Münster (MÜNSTERHACK 2026). Owners register their bike, buyers check a frame number before
-buying a used bike, stolen bikes are listed publicly. Spec: [docs/SPEC.md](docs/SPEC.md).
+**A digital bike pass for Münster that makes stolen bikes hard to sell.**
+Built in 36 hours at [MÜNSTERHACK 2026](https://www.muensterhack.de/).
 
-## Prerequisites
+![Demo: a buyer checks a frame number and sees that the bike is reported stolen](docs/leezenpass-demo.gif)
+
+## The problem
+
+Münster has the highest bike-theft rate per resident in Germany. In 2025 the police recorded
+**4,561 bike thefts** (about one in seven reported crimes), and only **12.6 %** were solved
+([Polizei Münster, Kriminalstatistik 2025](https://muenster.polizei.nrw/presse/kriminalstatistik-2025)).
+Bikes are stolen because they are easy to resell, while the police bike-pass app has been discontinued
+and online bike registration in Münster no longer exists.
+
+## The idea
+
+LeezenPass attacks the resale market:
+
+- **Deter:** registered bikes with a visible trust level are hard to resell.
+- **Verify:** buyers check a frame number before buying; sellers hand over ownership with a one-time code.
+- **Recover:** stolen bikes appear on a public list, without any owner data.
+
+## Features
+
+**Built at the hackathon**
+
+- Bike pass with photos and PDF export (for police and insurance)
+- AI prefill: type, colours, brand and frame number from photos, with a vision model running locally (Qwen3-VL via LM Studio)
+- Public "check before you buy" by frame number or FEIN code, no login, rate-limited, with a captcha
+- Theft report, public stolen list and share card
+- Ownership transfer with a one-time code, transfer certificate and verification page
+- Ownership proof: receipt photo plus a photo of the frame number with a 10-minute one-time code
+- Trust levels on every bike: *Selbst angegeben*, *Per Beleg geprüft*, *Von Partner bestätigt*
+- Goodwill points and badges for verified outcomes only
+- Privacy by design: the check never reveals that a clean bike is registered, FEIN codes are stored only as an HMAC hash, all photo metadata (including GPS) is stripped
+- German / English UI, installable PWA, demo-data mode with synthetic seed data
+
+**Planned**
+
+- Partner onboarding for bike shops and ADFC coding events
+- Found-bike matching with the city's Fundfahrradstation
+- Anonymous finder contact via the QR tag page
+- Community sightings matched to stolen bikes
+- Theft risk map and safe parking
+- Dispute resolution, leaderboard and referrals
+
+## Demo videos
+
+Silent screen recordings from the final pitch, with German UI:
+
+- [Register with AI prefill](docs/pitch/videos/demo-1-ai-prefill.mp4)
+- [Check before you buy](docs/pitch/videos/demo-2-check-stolen.mp4)
+- [Prove ownership](docs/pitch/videos/demo-3-verify-ownership.mp4)
+
+## Tech stack
+
+ASP.NET Core 10 (FastEndpoints, vertical slices), EF Core 10 with PostgreSQL + PostGIS, ASP.NET Core Identity
+(cookie auth), QuestPDF, SkiaSharp · React 19, Vite, TypeScript, Tailwind CSS v4, TanStack Query, react-i18next ·
+Docker Compose (PostGIS, MinIO, Mailpit). Specification: [docs/SPEC.md](docs/SPEC.md).
+
+## Run it locally
+
+### Prerequisites
 
 - .NET SDK 10 (`dotnet --version` ≥ 10.0.100)
 - Node.js 22 + npm
 - Docker (Desktop or compatible)
 
-## First run
+### First run
 
 ```bash
 # 1. Infrastructure: PostGIS (5432), MinIO (9000/9001), Mailpit (SMTP 1025, UI 8025)
@@ -32,12 +90,12 @@ Open http://localhost:5173. On a phone in the same Wi-Fi: `npm run dev -- --host
 Dev config lives in `api/LeezenPass.Api/appsettings.Development.json` (fakes on, demo mode on, dev-only secrets).
 Every config key is documented in [infra/.env.example](infra/.env.example).
 
-## Login accounts
+### Demo accounts
 
 All accounts are **local development / demo accounts** with made-up data. They only exist while
 `Features:DemoMode=true`; never reuse these passwords anywhere real.
 
-### Seeded demo accounts (every machine, after `-- seed`)
+#### Seeded demo accounts (every machine, after `-- seed`)
 
 Password for all: **`LeezenDemo2026`**
 
@@ -52,24 +110,10 @@ Password for all: **`LeezenDemo2026`**
 The seed recreates these accounts every time it runs, so data you change with them resets on the next seed.
 Frame numbers and codes for the check demo are in [seed/README.md](seed/README.md).
 
-### Accounts created by hand during development (this machine's database only)
-
-These are not seeded. A fresh database won't have them, and the seed doesn't touch them.
-
-| Email | Password | Role | Notes |
-| --- | --- | --- | --- |
-| `demo@leezenpass.local` | `Demo1234!` | – | First test account |
-| `owner1@leezenpass.local` | `Demo1234` | – | 1 bike |
-| `owner2@leezenpass.local` | `Demo1234` | – | 1 bike |
-| `owner3@leezenpass.local` | `Demo1234` | – | 1 bike |
-| `claude-test@leezenpass.local` | `Test1234` | – | Claude Code test account, no bikes; safe to delete |
-| `claude-buyer@leezenpass.local` | `Test1234` | – | Claude Code test account, no bikes; safe to delete |
-| `claude-third@leezenpass.local` | `Test1234` | – | Claude Code test account, no bikes; safe to delete |
-
 New accounts: register in the app (Login tab → "Konto erstellen"). Passwords need 8+ characters with upper case, lower case
 and a digit. Roles can only be assigned by the seed (or directly in the `user_roles` table).
 
-## AI photo prefill (LM Studio)
+### AI photo prefill (LM Studio)
 
 The Register page can suggest type, colours, brand and frame number from photos. In development this uses
 **Qwen3-VL-8B** running locally in [LM Studio](https://lmstudio.ai) (about 6 GB of RAM, works offline):
@@ -84,13 +128,13 @@ The Register page can suggest type, colours, brand and frame number from photos.
 If LM Studio isn't running, the form simply stays manual. To use canned suggestions instead set
 `Vision__Provider=Fake`. Load the model before the pitch: the API warms it up at startup, but a cold load takes ~16 s.
 
-## Offline / demo mode
+### Offline / demo mode
 
 `Features:UseFakes=true` (default in Development) swaps email and captcha for fakes, so the demo works without
 Wi-Fi. AI vision follows `Vision:Provider` instead: Development uses the local LM Studio model (works offline too);
 set `Vision__Provider=Fake` for canned suggestions without LM Studio. `Features:DemoMode=true` makes the web app show the "Demo-Daten" banner.
 
-## Everyday commands
+### Everyday commands
 
 | What | Command |
 | --- | --- |
@@ -106,11 +150,27 @@ set `Vision__Provider=Fake` for canned suggestions without LM Studio. `Features:
 | Reset demo data | `dotnet run --project api/LeezenPass.Api -- seed` |
 | Stop infra | `docker compose -f infra/docker-compose.yml down` |
 
-## Layout
+### Layout
 
 ```
 api/     ASP.NET Core 10 API (FastEndpoints vertical slices) + xUnit tests
 web/     React 19 PWA (Vite, Tailwind v4, TanStack Query, react-i18next)
 infra/   docker-compose.yml, .env.example
-docs/    SPEC.md
+docs/    SPEC.md, pitch videos
+seed/    Demo photos and seed notes
 ```
+
+## Known limitations
+
+- Demo quality: synthetic seed data, no production deployment yet.
+- The per-user limit on duplicate frame-number registrations is kept in memory, so it resets on restart and is per instance.
+- No admin screens yet (dispute resolution was cut during the hackathon).
+
+## Team
+
+Adarsh, Frank, Niharika, Phillip, Viola. Built at MÜNSTERHACK 2026 in Münster.
+See all 2026 projects in the [Code for Münster list](https://github.com/codeformuenster/muensterhack/blob/master/2026.md).
+
+## License
+
+[MIT](LICENSE). Reuse it for your city, and contributions are welcome.
