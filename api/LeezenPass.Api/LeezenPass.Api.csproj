@@ -25,6 +25,7 @@
     <PackageReference Include="QuestPDF" />
     <PackageReference Include="QRCoder" />
     <PackageReference Include="SkiaSharp" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" />
 
     <PackageReference Include="NsDepCop">
       <PrivateAssets>all</PrivateAssets>

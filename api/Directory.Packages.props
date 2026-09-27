@@ -16,6 +16,7 @@
     <PackageVersion Include="QuestPDF" Version="2026.9.0" />
     <PackageVersion Include="QRCoder" Version="1.8.0" />
     <PackageVersion Include="SkiaSharp" Version="4.152.1" />
+    <PackageVersion Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="4.152.1" />
     <!-- Analyzers -->
     <PackageVersion Include="NsDepCop" Version="3.1.0" />
     <!-- Tests -->
