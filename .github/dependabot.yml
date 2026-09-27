@@ -4,6 +4,9 @@ updates:
     directory: /api
     schedule:
       interval: weekly
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
     groups:
       nuget:
         patterns: ["*"]
@@ -13,6 +16,9 @@ updates:
     directory: /web
     schedule:
       interval: weekly
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
     groups:
       npm:
         patterns: ["*"]
