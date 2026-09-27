@@ -102,6 +102,7 @@ All from the repo root. Verified 2026-09-25.
 - Adding a package → say which and why, stable version only.
 - Secrets via `.env` / user-secrets only; document keys in `infra/.env.example`. Never commit secrets.
 - Commits: Conventional Commits (`feat(check): ...`). Don't push; the team pushes.
+- Never add Co-Authored-By or other trailers to commit messages.
 - If a task would take more than ~45 min, stop and propose a smaller cut.
 
 ## Definition of done (per slice)

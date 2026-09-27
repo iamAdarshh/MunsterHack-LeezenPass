@@ -1,5 +1,7 @@
 # LeezenPass
 
+[![CI](https://github.com/iamAdarshh/MunsterHack-LeezenPass/actions/workflows/ci.yml/badge.svg)](https://github.com/iamAdarshh/MunsterHack-LeezenPass/actions/workflows/ci.yml)
+
 **A digital bike pass for Münster that makes stolen bikes hard to sell.**
 Built in 36 hours at [MÜNSTERHACK 2026](https://www.muensterhack.de/).
 
